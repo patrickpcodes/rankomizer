@@ -1,30 +1,57 @@
-var builder = WebApplication.CreateBuilder(args);
+using System.Reflection;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+using Rankomizer.Application;
+using Rankomizer.Infrastructure;
+using Rankomizer.Server.Api;
+using Rankomizer.Server.Api.Extensions;
+using Rankomizer.Server.Api.Seeding;
+using Serilog;
 
-// Add services to the container.
+WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddControllers();
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-builder.Services.AddEndpointsApiExplorer(); // This is used by minimal APIs & for swagger 
-builder.Services.AddSwaggerGen();
+// builder.Host.UseSerilog((context, loggerConfig) => loggerConfig.ReadFrom.Configuration(context.Configuration));
 
-var app = builder.Build();
+builder.Services.AddSwaggerGenWithAuth();
 
-app.UseSwagger();
-app.UseSwaggerUI();
+builder.Services
+       .AddApplication()
+       .AddPresentation()
+       .AddInfrastructure(builder.Configuration);
 
-// Configure the HTTP request pipeline.
-// if (app.Environment.IsDevelopment())
+builder.Services.AddEndpoints(Assembly.GetExecutingAssembly());
+
+WebApplication app = builder.Build();
+
+app.MapEndpoints();
+
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwaggerWithUi();
+
+    app.ApplyMigrations();
+}
+
+// app.MapHealthChecks("health", new HealthCheckOptions
 // {
-//     
-// }
+//     ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
+// });
 
-app.UseHttpsRedirection();
+// app.UseRequestContextLogging();
+//
+// app.UseSerilogRequestLogging();
+
+app.UseExceptionHandler();
+
+app.UseAuthentication();
 
 app.UseAuthorization();
 
+// REMARK: If you want to use Controllers, you'll need this.
 app.MapControllers();
 
-app.Run();
+UserSeeding.SeedApplication( app );
+
+await app.RunAsync();
 
 namespace Rankomizer.Server.Api
 {
