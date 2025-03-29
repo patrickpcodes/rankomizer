@@ -1,7 +1,9 @@
 using System.Reflection;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Rankomizer.Application;
+using Rankomizer.Application.Catalog;
 using Rankomizer.Infrastructure;
+using Rankomizer.Infrastructure.Catalog;
 using Rankomizer.Server.Api;
 using Rankomizer.Server.Api.Extensions;
 using Rankomizer.Server.Api.Seeding;
@@ -19,6 +21,8 @@ builder.Services
        .AddInfrastructure(builder.Configuration);
 
 builder.Services.AddEndpoints(Assembly.GetExecutingAssembly());
+
+builder.Services.AddScoped<ICatalogRepository, CatalogRepository>();
 
 WebApplication app = builder.Build();
 
@@ -49,7 +53,7 @@ app.UseAuthorization();
 // REMARK: If you want to use Controllers, you'll need this.
 app.MapControllers();
 
-UserSeeding.SeedApplication( app );
+SeedApplication.SeedWebApplication( app );
 
 await app.RunAsync();
 

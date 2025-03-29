@@ -91,16 +91,5 @@ public class UserSeeding
         return result.Succeeded ? user : null;
     }
 
-    public static void SeedApplication( WebApplication app )
-    {
-        using var scope = app.Services.CreateScope();
-        scope.ServiceProvider.GetService<ApplicationDbContext>()?.Database.Migrate();
-        var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
 
-        var userSeeding = new UserSeeding( userManager, app.Configuration );
-        userSeeding.SeedDatabase().GetAwaiter().GetResult();
-        //Seed all other data
-        //var dataSeeding = new DataSeeding();
-        //dataSeeding.SeedDatabase().GetAwaiter().GetResult();
-    }
 }
