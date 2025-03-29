@@ -1,0 +1,60 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.13.35806.99 d17.13
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Rankomizer.Server.Api", "Rankomizer.Server.Api\Rankomizer.Server.Api.csproj", "{C6B69EFA-BF8D-4645-AD2B-2892F127E124}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{AA7D40A8-A031-422D-89CB-2ADEADF3C48A}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{7AC9339E-9BED-4FD0-A60E-4546D98B1EEA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Rankomizer.Domain", "Rankomizer.Domain\Rankomizer.Domain.csproj", "{2160674F-2840-45F9-A2EA-DEE03789F35C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Rankomizer.Application", "Rankomizer.Application\Rankomizer.Application.csproj", "{406BAE39-861F-4591-8D1B-475FA0D1CAB7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Rankomizer.Infrastructure", "Rankomizer.Infrastructure\Rankomizer.Infrastructure.csproj", "{D0E499E7-A834-47D0-B5EA-7B7E6B6BA68B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Rankomizer.Tests.Architecture", "Rankomizer.Tests.Architecture\Rankomizer.Tests.Architecture.csproj", "{070931B1-5CD1-49DD-97DF-D9C54108DB46}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{C6B69EFA-BF8D-4645-AD2B-2892F127E124}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C6B69EFA-BF8D-4645-AD2B-2892F127E124}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C6B69EFA-BF8D-4645-AD2B-2892F127E124}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C6B69EFA-BF8D-4645-AD2B-2892F127E124}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2160674F-2840-45F9-A2EA-DEE03789F35C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2160674F-2840-45F9-A2EA-DEE03789F35C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2160674F-2840-45F9-A2EA-DEE03789F35C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2160674F-2840-45F9-A2EA-DEE03789F35C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{406BAE39-861F-4591-8D1B-475FA0D1CAB7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{406BAE39-861F-4591-8D1B-475FA0D1CAB7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{406BAE39-861F-4591-8D1B-475FA0D1CAB7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{406BAE39-861F-4591-8D1B-475FA0D1CAB7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D0E499E7-A834-47D0-B5EA-7B7E6B6BA68B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D0E499E7-A834-47D0-B5EA-7B7E6B6BA68B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D0E499E7-A834-47D0-B5EA-7B7E6B6BA68B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D0E499E7-A834-47D0-B5EA-7B7E6B6BA68B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{070931B1-5CD1-49DD-97DF-D9C54108DB46}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{070931B1-5CD1-49DD-97DF-D9C54108DB46}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{070931B1-5CD1-49DD-97DF-D9C54108DB46}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{070931B1-5CD1-49DD-97DF-D9C54108DB46}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {40E64220-01C4-4952-A316-918FD1B6F631}
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{C6B69EFA-BF8D-4645-AD2B-2892F127E124} = {AA7D40A8-A031-422D-89CB-2ADEADF3C48A}
+		{2160674F-2840-45F9-A2EA-DEE03789F35C} = {AA7D40A8-A031-422D-89CB-2ADEADF3C48A}
+		{406BAE39-861F-4591-8D1B-475FA0D1CAB7} = {AA7D40A8-A031-422D-89CB-2ADEADF3C48A}
+		{D0E499E7-A834-47D0-B5EA-7B7E6B6BA68B} = {AA7D40A8-A031-422D-89CB-2ADEADF3C48A}
+		{070931B1-5CD1-49DD-97DF-D9C54108DB46} = {7AC9339E-9BED-4FD0-A60E-4546D98B1EEA}
+	EndGlobalSection
+EndGlobal
