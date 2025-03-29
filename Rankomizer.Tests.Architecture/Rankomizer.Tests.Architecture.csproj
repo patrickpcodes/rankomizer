@@ -21,4 +21,11 @@
             <PrivateAssets>all</PrivateAssets>
         </PackageReference>
     </ItemGroup>
+    <ItemGroup>
+      <Folder Include="Layers\" />
+    </ItemGroup>
+    <ItemGroup>
+      <ProjectReference Include="..\Rankomizer.Domain\Rankomizer.Domain.csproj" />
+      <ProjectReference Include="..\Rankomizer.Server.Api\Rankomizer.Server.Api.csproj" />
+    </ItemGroup>
 </Project>

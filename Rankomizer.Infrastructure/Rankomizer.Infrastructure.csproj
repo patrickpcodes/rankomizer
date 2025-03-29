@@ -13,4 +13,7 @@
         <PackageReference Include="Newtonsoft.Json" />
         <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" />
     </ItemGroup>
+    <ItemGroup>
+      <ProjectReference Include="..\Rankomizer.Application\Rankomizer.Application.csproj" />
+    </ItemGroup>
 </Project>

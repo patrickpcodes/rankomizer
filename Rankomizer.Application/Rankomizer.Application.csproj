@@ -7,8 +7,8 @@
     </PropertyGroup>
     <ItemGroup>
         <PackageReference Include="FluentValidation.DependencyInjectionExtensions" />
-        <PackageReference Include="MediatR" />
-        <PackageReference Include="Microsoft.EntityFrameworkCore" />
+        <PackageReference Include="MediatR" Version="12.4.1" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.3" />
         <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" />
         <PackageReference Include="Serilog" />
     </ItemGroup>
