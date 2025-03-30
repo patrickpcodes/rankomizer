@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text.Json;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -49,6 +50,62 @@ namespace Rankomizer.Infrastructure.Database.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("pk_asp_net_users", x => x.id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Movies",
+                columns: table => new
+                {
+                    item_id = table.Column<Guid>(type: "uuid", nullable: false),
+                    tmdb_id = table.Column<int>(type: "integer", nullable: false),
+                    imdb_id = table.Column<string>(type: "text", nullable: false),
+                    source_json = table.Column<JsonDocument>(type: "jsonb", nullable: true),
+                    created_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    updated_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("pk_movies", x => x.item_id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "paintings",
+                columns: table => new
+                {
+                    item_id = table.Column<Guid>(type: "uuid", nullable: false),
+                    title = table.Column<string>(type: "text", nullable: false),
+                    description = table.Column<string>(type: "text", nullable: true),
+                    image_url = table.Column<string>(type: "text", nullable: true),
+                    artist = table.Column<string>(type: "text", nullable: true),
+                    year_created = table.Column<int>(type: "integer", nullable: false),
+                    medium = table.Column<string>(type: "text", nullable: true),
+                    location = table.Column<string>(type: "text", nullable: true),
+                    created_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    updated_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("pk_paintings", x => x.item_id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "songs",
+                columns: table => new
+                {
+                    item_id = table.Column<Guid>(type: "uuid", nullable: false),
+                    title = table.Column<string>(type: "text", nullable: false),
+                    description = table.Column<string>(type: "text", nullable: true),
+                    image_url = table.Column<string>(type: "text", nullable: true),
+                    artist = table.Column<string>(type: "text", nullable: true),
+                    album = table.Column<string>(type: "text", nullable: true),
+                    release_year = table.Column<int>(type: "integer", nullable: false),
+                    duration = table.Column<string>(type: "text", nullable: true),
+                    created_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    updated_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("pk_songs", x => x.item_id);
                 });
 
             migrationBuilder.CreateTable(
@@ -212,6 +269,15 @@ namespace Rankomizer.Infrastructure.Database.Migrations
 
             migrationBuilder.DropTable(
                 name: "AspNetUserTokens");
+
+            migrationBuilder.DropTable(
+                name: "Movies");
+
+            migrationBuilder.DropTable(
+                name: "paintings");
+
+            migrationBuilder.DropTable(
+                name: "songs");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");

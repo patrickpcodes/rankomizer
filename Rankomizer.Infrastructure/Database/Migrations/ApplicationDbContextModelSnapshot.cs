@@ -164,39 +164,15 @@ namespace Rankomizer.Infrastructure.Database.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("created_at");
 
-                    b.Property<string>("Description")
-                        .HasColumnType("text")
-                        .HasColumnName("description");
-
-                    b.Property<string>("ImageUrl")
-                        .HasColumnType("text")
-                        .HasColumnName("image_url");
-
-                    b.Property<string>("ItemName")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("character varying(255)")
-                        .HasColumnName("item_name");
-
-                    b.Property<string>("ItemType")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)")
-                        .HasColumnName("item_type");
-
-                    b.Property<JsonDocument>("JsonData")
-                        .IsRequired()
-                        .HasColumnType("jsonb")
-                        .HasColumnName("json_data");
-
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("updated_at");
 
-                    b.HasKey("ItemId")
-                        .HasName("pk_items");
+                    b.HasKey("ItemId");
 
-                    b.ToTable("Items", (string)null);
+                    b.ToTable("catalog_entry", (string)null);
+
+                    b.UseTptMappingStrategy();
                 });
 
             modelBuilder.Entity("Rankomizer.Domain.User.ApplicationRole", b =>
@@ -312,6 +288,98 @@ namespace Rankomizer.Infrastructure.Database.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
+            modelBuilder.Entity("Rankomizer.Domain.Catalog.MovieItem", b =>
+                {
+                    b.HasBaseType("Rankomizer.Domain.Catalog.CatalogEntry");
+
+                    b.Property<string>("ImdbId")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("imdb_id");
+
+                    b.Property<JsonDocument>("SourceJson")
+                        .HasColumnType("jsonb")
+                        .HasColumnName("source_json");
+
+                    b.Property<int>("TmdbId")
+                        .HasColumnType("integer")
+                        .HasColumnName("tmdb_id");
+
+                    b.ToTable("Movies", (string)null);
+                });
+
+            modelBuilder.Entity("Rankomizer.Domain.Catalog.Painting", b =>
+                {
+                    b.HasBaseType("Rankomizer.Domain.Catalog.CatalogEntry");
+
+                    b.Property<string>("Artist")
+                        .HasColumnType("text")
+                        .HasColumnName("artist");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("text")
+                        .HasColumnName("description");
+
+                    b.Property<string>("ImageUrl")
+                        .HasColumnType("text")
+                        .HasColumnName("image_url");
+
+                    b.Property<string>("Location")
+                        .HasColumnType("text")
+                        .HasColumnName("location");
+
+                    b.Property<string>("Medium")
+                        .HasColumnType("text")
+                        .HasColumnName("medium");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("title");
+
+                    b.Property<int>("YearCreated")
+                        .HasColumnType("integer")
+                        .HasColumnName("year_created");
+
+                    b.ToTable("paintings", (string)null);
+                });
+
+            modelBuilder.Entity("Rankomizer.Domain.Catalog.Song", b =>
+                {
+                    b.HasBaseType("Rankomizer.Domain.Catalog.CatalogEntry");
+
+                    b.Property<string>("Album")
+                        .HasColumnType("text")
+                        .HasColumnName("album");
+
+                    b.Property<string>("Artist")
+                        .HasColumnType("text")
+                        .HasColumnName("artist");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("text")
+                        .HasColumnName("description");
+
+                    b.Property<string>("Duration")
+                        .HasColumnType("text")
+                        .HasColumnName("duration");
+
+                    b.Property<string>("ImageUrl")
+                        .HasColumnType("text")
+                        .HasColumnName("image_url");
+
+                    b.Property<int>("ReleaseYear")
+                        .HasColumnType("integer")
+                        .HasColumnName("release_year");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("title");
+
+                    b.ToTable("songs", (string)null);
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>
                 {
                     b.HasOne("Rankomizer.Domain.User.ApplicationRole", null)
@@ -367,6 +435,36 @@ namespace Rankomizer.Infrastructure.Database.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
                         .HasConstraintName("fk_asp_net_user_tokens_asp_net_users_user_id");
+                });
+
+            modelBuilder.Entity("Rankomizer.Domain.Catalog.MovieItem", b =>
+                {
+                    b.HasOne("Rankomizer.Domain.Catalog.CatalogEntry", null)
+                        .WithOne()
+                        .HasForeignKey("Rankomizer.Domain.Catalog.MovieItem", "ItemId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_movies_catalog_entry_item_id");
+                });
+
+            modelBuilder.Entity("Rankomizer.Domain.Catalog.Painting", b =>
+                {
+                    b.HasOne("Rankomizer.Domain.Catalog.CatalogEntry", null)
+                        .WithOne()
+                        .HasForeignKey("Rankomizer.Domain.Catalog.Painting", "ItemId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_paintings_catalog_entry_item_id");
+                });
+
+            modelBuilder.Entity("Rankomizer.Domain.Catalog.Song", b =>
+                {
+                    b.HasOne("Rankomizer.Domain.Catalog.CatalogEntry", null)
+                        .WithOne()
+                        .HasForeignKey("Rankomizer.Domain.Catalog.Song", "ItemId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_songs_catalog_entry_item_id");
                 });
 #pragma warning restore 612, 618
         }

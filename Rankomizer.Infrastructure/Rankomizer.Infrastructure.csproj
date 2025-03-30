@@ -21,4 +21,7 @@
     <ItemGroup>
       <ProjectReference Include="..\Rankomizer.Application\Rankomizer.Application.csproj" />
     </ItemGroup>
+    <ItemGroup>
+      <Folder Include="Database\Migrations\" />
+    </ItemGroup>
 </Project>

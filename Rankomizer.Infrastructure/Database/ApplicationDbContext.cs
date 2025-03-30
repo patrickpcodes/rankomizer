@@ -10,24 +10,18 @@ namespace Rankomizer.Infrastructure.Database;
 public sealed class ApplicationDbContext( DbContextOptions<ApplicationDbContext> options, IPublisher publisher )
     :IdentityDbContext<ApplicationUser, ApplicationRole, Guid>( options ), IApplicationDbContext
 {
-    public DbSet<CatalogEntry> Items => Set<CatalogEntry>();
+    public DbSet<MovieItem> Movies => Set<MovieItem>();
+    public DbSet<Song> Songs => Set<Song>();
+    public DbSet<Painting> Paintings => Set<Painting>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder); // this is critical for Identity
-        modelBuilder.Entity<CatalogEntry>().ToTable("Items");
-
-        modelBuilder.Entity<CatalogEntry>()
-                    .Property(i => i.JsonData)
+        modelBuilder.Entity<MovieItem>().HasBaseType<CatalogEntry>();
+        modelBuilder.Entity<MovieItem>()
+                    .Property(m => m.SourceJson)
                     .HasColumnType("jsonb");
-
-        modelBuilder.Entity<CatalogEntry>()
-                    .Property(i => i.ItemName)
-                    .HasMaxLength(255);
-
-        modelBuilder.Entity<CatalogEntry>()
-                    .Property(i => i.ItemType)
-                    .HasMaxLength(50);
+        modelBuilder.Entity<MovieItem>().ToTable("Movies");
     }
 
     public override int SaveChanges()

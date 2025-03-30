@@ -1,10 +1,11 @@
 ﻿using Rankomizer.Domain.Catalog;
+using TMDbLib.Objects.Movies;
 
 namespace Rankomizer.Application.Catalog;
 
 public interface ICatalogRepository
 {
-    Task<List<CatalogEntry>> GetAllItemsAsync();
-    Task<CatalogEntry?> GetItemByIdAsync(Guid id);
-    Task<T?> GetTypedItemDataAsync<T>(Guid itemId);
+    Task<List<MovieItem>> GetAllMovies();
+    Task<List<object>> GetAllItemsAsync();
+    Task<List<object>> LoadFullItemsAsync(List<(Guid ItemId, string ItemType)> items);
 }

@@ -1,4 +1,7 @@
-﻿using Rankomizer.Server.Api.Infrastructure;
+﻿using System.Text.Json;
+using System.Text.Json.Serialization;
+using Microsoft.AspNetCore.Http.Json;
+using Rankomizer.Server.Api.Infrastructure;
 
 namespace Rankomizer.Server.Api;
 
@@ -10,8 +13,17 @@ public static class DependencyInjection
         services.AddSwaggerGen();
 
         // REMARK: If you want to use Controllers, you'll need this.
-        services.AddControllers();
-
+        services.AddControllers().AddJsonOptions(options =>
+        {
+            // options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
+            // options.JsonSerializerOptions.IncludeFields = true;
+            // options.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.Never;
+        });;
+        services.Configure<JsonOptions>(options =>
+        {
+            // options.SerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
+            // options.SerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.Never;
+        });
         services.AddExceptionHandler<GlobalExceptionHandler>();
         services.AddProblemDetails();
 

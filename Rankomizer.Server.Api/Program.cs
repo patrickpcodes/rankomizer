@@ -53,7 +53,7 @@ app.UseAuthorization();
 // REMARK: If you want to use Controllers, you'll need this.
 app.MapControllers();
 
-SeedApplication.SeedWebApplication( app );
+SeedApplication.SeedWebApplication( app, builder.Configuration );
 
 await app.RunAsync();
 

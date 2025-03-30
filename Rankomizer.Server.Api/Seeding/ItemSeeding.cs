@@ -2,6 +2,10 @@
 using Microsoft.EntityFrameworkCore;
 using Rankomizer.Domain.Catalog;
 using Rankomizer.Infrastructure.Database;
+using TMDbLib.Client;
+using TMDbLib.Objects.Collections;
+using TMDbLib.Objects.General;
+using TMDbLib.Objects.Search;
 
 namespace Rankomizer.Server.Api.Seeding;
 
@@ -15,65 +19,59 @@ public static class JsonOptions
 
 public static class ItemSeeding
 {
-    public static async Task SeedItemsAsync(ApplicationDbContext context)
+      public static async Task SeedItemsAsync(ApplicationDbContext context, IConfiguration configuration)
     {
-        if (await context.Items.AnyAsync()) return;
+        if ( !await context.Movies.AnyAsync() )
+        { 
+            
+            var movieList = new List<MovieItem>();
+          var tmdbApiKey = configuration["Tmdb:ApiKey"];
+          TMDbClient client = new TMDbClient(tmdbApiKey);
+          
+          SearchContainer<SearchCollection> collectons = client.SearchCollectionAsync("James Bond").Result;
+          Console.WriteLine($"Got {collectons.Results.Count:N0} collections");
 
-        var movie = new MovieMetadata
+          Collection jamesBonds = client.GetCollectionAsync(collectons.Results.First().Id).Result;
+          Console.WriteLine($"Collection: {jamesBonds.Name}");
+          Console.WriteLine();
+
+          Console.WriteLine($"Got {jamesBonds.Parts.Count:N0} James Bond Movies");
+          foreach ( SearchMovie part in jamesBonds.Parts )
+          {
+              var movie = client.GetMovieAsync(part.Id).Result;
+              movieList.Add(new MovieItem()
+              {
+                  ItemId = new Guid(),
+                  TmdbId = movie.Id,
+                  ImdbId = movie.ImdbId,
+                  SourceJson = JsonDocument.Parse(JsonSerializer.Serialize(movie, JsonOptions.CamelCase)) 
+              }  ); 
+          }
+          context.Movies.AddRange(movieList);
+          await context.SaveChangesAsync();
+        }
+
+
+        if( await context.Songs.AnyAsync() || await context.Paintings.AnyAsync()) return;
+
+        var songs = new List<Song>
         {
-            Director = "Christopher Nolan",
-            ReleaseYear = 2010,
-            Genre = "Sci-Fi"
+            new() { ItemId = Guid.NewGuid(), Title = "Bohemian Rhapsody", Description = "Epic rock ballad", ImageUrl = "https://example.com/bohemian.jpg", Artist = "Queen", Album = "A Night at the Opera", ReleaseYear = 1975, Duration = "00:05:55" },
+            new() { ItemId = Guid.NewGuid(), Title = "Imagine", Description = "John Lennon's iconic song", ImageUrl = "https://example.com/imagine.jpg", Artist = "John Lennon", Album = "Imagine", ReleaseYear = 1971, Duration = "00:03:01" },
+            new() { ItemId = Guid.NewGuid(), Title = "Smells Like Teen Spirit", Description = "Grunge anthem", ImageUrl = "https://example.com/spirit.jpg", Artist = "Nirvana", Album = "Nevermind", ReleaseYear = 1991, Duration = "00:05:01" },
         };
 
-        var song = new SongMetadata
+        var paintings = new List<Painting>
         {
-            Artist = "Queen",
-            Album = "A Night at the Opera",
-            ReleaseYear = 1975,
-            Duration = "00:05:55"
+            new() { ItemId = Guid.NewGuid(), Title = "Starry Night", Description = "Post-Impressionist masterpiece", ImageUrl = "https://example.com/starrynight.jpg", Artist = "Vincent van Gogh", YearCreated = 1889, Medium = "Oil on canvas", Location = "MoMA" },
+            new() { ItemId = Guid.NewGuid(), Title = "Mona Lisa", Description = "Leonardo da Vinci's iconic portrait", ImageUrl = "https://example.com/monalisa.jpg", Artist = "Leonardo da Vinci", YearCreated = 1503, Medium = "Oil on wood", Location = "Louvre" },
+            new() { ItemId = Guid.NewGuid(), Title = "The Persistence of Memory", Description = "Surrealist melting clocks", ImageUrl = "https://example.com/memory.jpg", Artist = "Salvador Dalí", YearCreated = 1931, Medium = "Oil on canvas", Location = "MoMA" },
         };
 
-        var painting = new PaintingMetadata
-        {
-            Artist = "Vincent van Gogh",
-            YearCreated = 1889,
-            Medium = "Oil on canvas",
-            Location = "Museum of Modern Art"
-        };
+        
+        context.Songs.AddRange(songs);
+        context.Paintings.AddRange(paintings);
 
-        var items = new List<CatalogEntry>
-        {
-            new CatalogEntry
-            {
-                ItemId = Guid.NewGuid(),
-                ItemName = "Inception",
-                ItemType = "Movie",
-                Description = "A mind-bending thriller",
-                ImageUrl = "https://example.com/inception.jpg",
-                JsonData = JsonDocument.Parse(JsonSerializer.Serialize(movie, JsonOptions.CamelCase))
-            },
-            new CatalogEntry
-            {
-                ItemId = Guid.NewGuid(),
-                ItemName = "Bohemian Rhapsody",
-                ItemType = "Song",
-                Description = "Epic rock ballad",
-                ImageUrl = "https://example.com/bohemian.jpg",
-                JsonData = JsonDocument.Parse(JsonSerializer.Serialize(song, JsonOptions.CamelCase))
-            },
-            new CatalogEntry
-            {
-                ItemId = Guid.NewGuid(),
-                ItemName = "Starry Night",
-                ItemType = "Painting",
-                Description = "Post-Impressionist masterpiece",
-                ImageUrl = "https://example.com/starrynight.jpg",
-                JsonData = JsonDocument.Parse(JsonSerializer.Serialize(painting, JsonOptions.CamelCase))
-            }
-        };
-
-        context.Items.AddRange(items);
         await context.SaveChangesAsync();
     }
 }

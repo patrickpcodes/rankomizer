@@ -7,7 +7,7 @@ namespace Rankomizer.Server.Api.Seeding;
 
 public static class SeedApplication
 {
-    public static void SeedWebApplication( WebApplication app )
+    public static void SeedWebApplication( WebApplication app, IConfiguration config )
     {
         using var scope = app.Services.CreateScope();
         var appContextDb = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
@@ -16,7 +16,7 @@ public static class SeedApplication
 
         var userSeeding = new UserSeeding( userManager, app.Configuration );
         userSeeding.SeedDatabase().GetAwaiter().GetResult();
-        ItemSeeding.SeedItemsAsync( appContextDb ).GetAwaiter().GetResult();
+        ItemSeeding.SeedItemsAsync( appContextDb, config ).GetAwaiter().GetResult();
         //Seed all other data
         //var dataSeeding = new DataSeeding();
         //dataSeeding.SeedDatabase().GetAwaiter().GetResult();
