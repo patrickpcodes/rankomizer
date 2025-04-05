@@ -18,5 +18,9 @@ internal sealed class TestGet : IEndpoint
             var movieItems = await repo.GetAllMovies();
             return Results.Ok( movieItems );
         } );
+        app.Map( "/api/authorized", [Authorize] async () =>
+        {
+            return Results.Ok( new { message = "Authorized" } );
+        } );
     }
 }
