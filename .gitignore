@@ -400,3 +400,5 @@ FodyWeavers.xsd
 *.sln.iml
 
 Rankomizer.Server.Api/appsettings.Development.json
+
+.idea/
