@@ -11,7 +11,7 @@ namespace Rankomizer.Server.Api.Controllers;
 
 [ApiController]
 [Route( "api/[controller]" )]
-[Authorize]
+// [Authorize]
 public class GauntletController : ControllerBase
 {
     private readonly IGauntletService _gauntletService;
@@ -103,12 +103,36 @@ public class GauntletController : ControllerBase
                 userId,
                 request.GauntletName );
 
-            return Ok( gauntlet );
+            return Ok( new {gauntletId= gauntlet.Id} );
         }
         catch ( Exception ex )
         {
             return BadRequest( new { message = ex.Message } );
         }
+    }
+    
+    [HttpPost("{gauntletId}/start")]
+    public async Task<ActionResult<DuelDto?>> StartGauntlet(Guid gauntletId)
+    {
+        var duel = await _gauntletService.GetNextPendingDuelAsync(gauntletId);
+        if (duel == null)
+            return Ok(null);
+
+        return Ok(duel.ToDto());
+    }
+
+    [HttpPost("duel/submit")]
+    public async Task<ActionResult<DuelDto?>> SubmitDuel([FromBody] SubmitDuelRequest request)
+    {
+        var nextDuel = await _gauntletService.SubmitDuelResultAsync(
+            request.DuelId,
+            request.WinnerRosterItemId
+        );
+
+        if (nextDuel == null)
+            return Ok(null); // gauntlet is complete
+        var dto = nextDuel.ToDto();
+        return Ok(dto);
     }
 }
 
@@ -116,4 +140,57 @@ public class CreateGauntletRequest
 {
     public Guid CollectionId { get; set; }
     public string? GauntletName { get; set; }
+}
+
+public static class DuelExtensions
+{
+    public static DuelDto ToDto(this Duel duel)
+    {
+        var gauntlet = duel.Gauntlet;
+
+        return new DuelDto
+        {
+            DuelId = duel.Id,
+            OptionA = duel.RosterItemA.ToDto(),
+            OptionB = duel.RosterItemB.ToDto(),
+            Roster = gauntlet.RosterItems
+                             .OrderByDescending(r => r.Wins)
+                             .Select(ri => ri.ToDto())
+                             .ToList()
+        };
+    }
+
+    public static RosterItemDto ToDto(this RosterItem ri)
+    {
+        var item = ri.Item;
+
+        return new RosterItemDto
+        {
+            Id = ri.Id,
+            Status = ri.Status,
+            Wins = ri.Wins,
+            Losses = ri.Losses,
+            Score = ri.Score,
+            ItemType = item.ItemType,
+            Name = item.Name,
+            Description = item.Description,
+            ImageUrl = item.ImageUrl,
+            Details = item switch
+            {
+                Movie m => new MovieDetailsDto
+                {
+                    TmdbId = m.TmdbId,
+                    ImdbId = m.ImdbId,
+                    // SourceJson = m.SourceJson,
+                },
+                // Song s => new SongDetailsDto
+                // {
+                //     Artist = s.Artist,
+                //     Album = s.Album,
+                //     DurationSeconds = s.DurationSeconds
+                // },
+                _ => null
+            }
+        };
+    }
 }

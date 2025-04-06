@@ -61,4 +61,16 @@ public class RosterItemDto
 
     public object? Details { get; set; } // Type-specific fields (MovieDetailsDto, etc.)
 }
+public class DuelDto
+{
+    public Guid DuelId { get; set; }
+    public RosterItemDto OptionA { get; set; }
+    public RosterItemDto OptionB { get; set; }
+    public List<RosterItemDto> Roster { get; set; } = new();
+}
 
+public class SubmitDuelRequest
+{
+    public Guid DuelId { get; set; }
+    public Guid WinnerRosterItemId { get; set; }
+}
