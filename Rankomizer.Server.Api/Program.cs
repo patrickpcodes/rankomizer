@@ -2,8 +2,11 @@ using System.Reflection;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Rankomizer.Application;
 using Rankomizer.Application.Catalog;
+using Rankomizer.Application.Gauntlet;
+using Rankomizer.Domain.Catalog;
 using Rankomizer.Infrastructure;
 using Rankomizer.Infrastructure.Catalog;
+using Rankomizer.Infrastructure.Gauntlets;
 using Rankomizer.Server.Api;
 using Rankomizer.Server.Api.Extensions;
 using Rankomizer.Server.Api.Seeding;
@@ -23,6 +26,18 @@ builder.Services
 builder.Services.AddEndpoints(Assembly.GetExecutingAssembly());
 
 builder.Services.AddScoped<ICatalogRepository, CatalogRepository>();
+builder.Services.AddScoped<IGauntletService, GauntletService>();
+builder.Services.AddCors( options =>
+{
+    options.AddPolicy( "MyCorsPolicy", policy =>
+    {
+        policy.WithOrigins( "http://localhost:3000" ) // Explicitly specify your Next.js origin
+              .AllowAnyHeader()
+              .AllowAnyMethod()
+              .AllowCredentials(); // This is important when credentials are involved
+    } );
+} );
+
 
 WebApplication app = builder.Build();
 
@@ -49,7 +64,7 @@ app.UseExceptionHandler();
 app.UseAuthentication();
 
 app.UseAuthorization();
-
+app.UseCors( "MyCorsPolicy" );
 // REMARK: If you want to use Controllers, you'll need this.
 app.MapControllers();
 

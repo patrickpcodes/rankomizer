@@ -13,8 +13,8 @@ using Rankomizer.Infrastructure.Database;
 namespace Rankomizer.Infrastructure.Database.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250329181604_Test")]
-    partial class Test
+    [Migration("20250406010638_AddedGauntlet")]
+    partial class AddedGauntlet
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -156,7 +156,157 @@ namespace Rankomizer.Infrastructure.Database.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("Rankomizer.Domain.Catalog.CatalogEntry", b =>
+            modelBuilder.Entity("Rankomizer.Domain.Catalog.Collection", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
+
+                    b.Property<Guid>("CreatedByUserId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("created_by_user_id");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("description");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("name");
+
+                    b.HasKey("Id")
+                        .HasName("pk_collections");
+
+                    b.HasIndex("CreatedByUserId")
+                        .HasDatabaseName("ix_collections_created_by_user_id");
+
+                    b.ToTable("Collections", (string)null);
+                });
+
+            modelBuilder.Entity("Rankomizer.Domain.Catalog.CollectionItem", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<Guid>("CollectionId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("collection_id");
+
+                    b.Property<Guid>("ItemId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("item_id");
+
+                    b.Property<int>("Order")
+                        .HasColumnType("integer")
+                        .HasColumnName("order");
+
+                    b.HasKey("Id")
+                        .HasName("pk_collection_items");
+
+                    b.HasIndex("CollectionId")
+                        .HasDatabaseName("ix_collection_items_collection_id");
+
+                    b.HasIndex("ItemId")
+                        .HasDatabaseName("ix_collection_items_item_id");
+
+                    b.ToTable("CollectionItems", (string)null);
+                });
+
+            modelBuilder.Entity("Rankomizer.Domain.Catalog.Duel", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
+
+                    b.Property<Guid>("GauntletId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("gauntlet_id");
+
+                    b.Property<Guid>("RosterItemAId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("roster_item_a_id");
+
+                    b.Property<Guid>("RosterItemBId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("roster_item_b_id");
+
+                    b.Property<Guid?>("WinnerRosterItemId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("winner_roster_item_id");
+
+                    b.HasKey("Id")
+                        .HasName("pk_duels");
+
+                    b.HasIndex("GauntletId")
+                        .HasDatabaseName("ix_duels_gauntlet_id");
+
+                    b.HasIndex("RosterItemAId")
+                        .HasDatabaseName("ix_duels_roster_item_a_id");
+
+                    b.HasIndex("RosterItemBId")
+                        .HasDatabaseName("ix_duels_roster_item_b_id");
+
+                    b.HasIndex("WinnerRosterItemId")
+                        .HasDatabaseName("ix_duels_winner_roster_item_id");
+
+                    b.ToTable("Duels", (string)null);
+                });
+
+            modelBuilder.Entity("Rankomizer.Domain.Catalog.Gauntlet", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<Guid>("CollectionId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("collection_id");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("text")
+                        .HasColumnName("description");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("name");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("user_id");
+
+                    b.HasKey("Id")
+                        .HasName("pk_gauntlets");
+
+                    b.HasIndex("CollectionId")
+                        .HasDatabaseName("ix_gauntlets_collection_id");
+
+                    b.HasIndex("UserId")
+                        .HasDatabaseName("ix_gauntlets_user_id");
+
+                    b.ToTable("Gauntlets", (string)null);
+                });
+
+            modelBuilder.Entity("Rankomizer.Domain.Catalog.Item", b =>
                 {
                     b.Property<Guid>("ItemId")
                         .ValueGeneratedOnAdd()
@@ -167,15 +317,77 @@ namespace Rankomizer.Infrastructure.Database.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("created_at");
 
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("description");
+
+                    b.Property<string>("ImageUrl")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("image_url");
+
+                    b.Property<int>("ItemType")
+                        .HasColumnType("integer")
+                        .HasColumnName("item_type");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("name");
+
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("updated_at");
 
                     b.HasKey("ItemId");
 
-                    b.ToTable("catalog_entry", (string)null);
+                    b.ToTable("Items", (string)null);
 
                     b.UseTptMappingStrategy();
+                });
+
+            modelBuilder.Entity("Rankomizer.Domain.Catalog.RosterItem", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<Guid>("GauntletId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("gauntlet_id");
+
+                    b.Property<Guid>("ItemId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("item_id");
+
+                    b.Property<int>("Losses")
+                        .HasColumnType("integer")
+                        .HasColumnName("losses");
+
+                    b.Property<double>("Score")
+                        .HasColumnType("double precision")
+                        .HasColumnName("score");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("integer")
+                        .HasColumnName("status");
+
+                    b.Property<int>("Wins")
+                        .HasColumnType("integer")
+                        .HasColumnName("wins");
+
+                    b.HasKey("Id")
+                        .HasName("pk_roster_items");
+
+                    b.HasIndex("GauntletId")
+                        .HasDatabaseName("ix_roster_items_gauntlet_id");
+
+                    b.HasIndex("ItemId")
+                        .HasDatabaseName("ix_roster_items_item_id");
+
+                    b.ToTable("RosterItems", (string)null);
                 });
 
             modelBuilder.Entity("Rankomizer.Domain.User.ApplicationRole", b =>
@@ -291,9 +503,9 @@ namespace Rankomizer.Infrastructure.Database.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
-            modelBuilder.Entity("Rankomizer.Domain.Catalog.MovieItem", b =>
+            modelBuilder.Entity("Rankomizer.Domain.Catalog.Movie", b =>
                 {
-                    b.HasBaseType("Rankomizer.Domain.Catalog.CatalogEntry");
+                    b.HasBaseType("Rankomizer.Domain.Catalog.Item");
 
                     b.Property<string>("ImdbId")
                         .IsRequired()
@@ -313,19 +525,11 @@ namespace Rankomizer.Infrastructure.Database.Migrations
 
             modelBuilder.Entity("Rankomizer.Domain.Catalog.Painting", b =>
                 {
-                    b.HasBaseType("Rankomizer.Domain.Catalog.CatalogEntry");
+                    b.HasBaseType("Rankomizer.Domain.Catalog.Item");
 
                     b.Property<string>("Artist")
                         .HasColumnType("text")
                         .HasColumnName("artist");
-
-                    b.Property<string>("Description")
-                        .HasColumnType("text")
-                        .HasColumnName("description");
-
-                    b.Property<string>("ImageUrl")
-                        .HasColumnType("text")
-                        .HasColumnName("image_url");
 
                     b.Property<string>("Location")
                         .HasColumnType("text")
@@ -344,12 +548,12 @@ namespace Rankomizer.Infrastructure.Database.Migrations
                         .HasColumnType("integer")
                         .HasColumnName("year_created");
 
-                    b.ToTable("paintings", (string)null);
+                    b.ToTable("Paintings", (string)null);
                 });
 
             modelBuilder.Entity("Rankomizer.Domain.Catalog.Song", b =>
                 {
-                    b.HasBaseType("Rankomizer.Domain.Catalog.CatalogEntry");
+                    b.HasBaseType("Rankomizer.Domain.Catalog.Item");
 
                     b.Property<string>("Album")
                         .HasColumnType("text")
@@ -359,28 +563,16 @@ namespace Rankomizer.Infrastructure.Database.Migrations
                         .HasColumnType("text")
                         .HasColumnName("artist");
 
-                    b.Property<string>("Description")
-                        .HasColumnType("text")
-                        .HasColumnName("description");
-
-                    b.Property<string>("Duration")
-                        .HasColumnType("text")
-                        .HasColumnName("duration");
-
-                    b.Property<string>("ImageUrl")
-                        .HasColumnType("text")
-                        .HasColumnName("image_url");
-
-                    b.Property<int>("ReleaseYear")
-                        .HasColumnType("integer")
-                        .HasColumnName("release_year");
+                    b.Property<JsonDocument>("SourceJson")
+                        .HasColumnType("jsonb")
+                        .HasColumnName("source_json");
 
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasColumnType("text")
                         .HasColumnName("title");
 
-                    b.ToTable("songs", (string)null);
+                    b.ToTable("Songs", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>
@@ -440,34 +632,158 @@ namespace Rankomizer.Infrastructure.Database.Migrations
                         .HasConstraintName("fk_asp_net_user_tokens_asp_net_users_user_id");
                 });
 
-            modelBuilder.Entity("Rankomizer.Domain.Catalog.MovieItem", b =>
+            modelBuilder.Entity("Rankomizer.Domain.Catalog.Collection", b =>
                 {
-                    b.HasOne("Rankomizer.Domain.Catalog.CatalogEntry", null)
-                        .WithOne()
-                        .HasForeignKey("Rankomizer.Domain.Catalog.MovieItem", "ItemId")
+                    b.HasOne("Rankomizer.Domain.User.ApplicationUser", "CreatedByUser")
+                        .WithMany()
+                        .HasForeignKey("CreatedByUserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
-                        .HasConstraintName("fk_movies_catalog_entry_item_id");
+                        .HasConstraintName("fk_collections_asp_net_users_created_by_user_id");
+
+                    b.Navigation("CreatedByUser");
+                });
+
+            modelBuilder.Entity("Rankomizer.Domain.Catalog.CollectionItem", b =>
+                {
+                    b.HasOne("Rankomizer.Domain.Catalog.Collection", "Collection")
+                        .WithMany("Items")
+                        .HasForeignKey("CollectionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_collection_items_collections_collection_id");
+
+                    b.HasOne("Rankomizer.Domain.Catalog.Item", "Item")
+                        .WithMany()
+                        .HasForeignKey("ItemId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_collection_items_items_item_id");
+
+                    b.Navigation("Collection");
+
+                    b.Navigation("Item");
+                });
+
+            modelBuilder.Entity("Rankomizer.Domain.Catalog.Duel", b =>
+                {
+                    b.HasOne("Rankomizer.Domain.Catalog.Gauntlet", "Gauntlet")
+                        .WithMany("Duels")
+                        .HasForeignKey("GauntletId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_duels_gauntlets_gauntlet_id");
+
+                    b.HasOne("Rankomizer.Domain.Catalog.RosterItem", "RosterItemA")
+                        .WithMany()
+                        .HasForeignKey("RosterItemAId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_duels_roster_items_roster_item_a_id");
+
+                    b.HasOne("Rankomizer.Domain.Catalog.RosterItem", "RosterItemB")
+                        .WithMany()
+                        .HasForeignKey("RosterItemBId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_duels_roster_items_roster_item_b_id");
+
+                    b.HasOne("Rankomizer.Domain.Catalog.RosterItem", "WinnerRosterItem")
+                        .WithMany()
+                        .HasForeignKey("WinnerRosterItemId")
+                        .HasConstraintName("fk_duels_roster_items_winner_roster_item_id");
+
+                    b.Navigation("Gauntlet");
+
+                    b.Navigation("RosterItemA");
+
+                    b.Navigation("RosterItemB");
+
+                    b.Navigation("WinnerRosterItem");
+                });
+
+            modelBuilder.Entity("Rankomizer.Domain.Catalog.Gauntlet", b =>
+                {
+                    b.HasOne("Rankomizer.Domain.Catalog.Collection", "Collection")
+                        .WithMany()
+                        .HasForeignKey("CollectionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_gauntlets_collections_collection_id");
+
+                    b.HasOne("Rankomizer.Domain.User.ApplicationUser", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_gauntlets_asp_net_users_user_id");
+
+                    b.Navigation("Collection");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Rankomizer.Domain.Catalog.RosterItem", b =>
+                {
+                    b.HasOne("Rankomizer.Domain.Catalog.Gauntlet", "Gauntlet")
+                        .WithMany("RosterItems")
+                        .HasForeignKey("GauntletId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_roster_items_gauntlets_gauntlet_id");
+
+                    b.HasOne("Rankomizer.Domain.Catalog.Item", "Item")
+                        .WithMany()
+                        .HasForeignKey("ItemId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_roster_items_items_item_id");
+
+                    b.Navigation("Gauntlet");
+
+                    b.Navigation("Item");
+                });
+
+            modelBuilder.Entity("Rankomizer.Domain.Catalog.Movie", b =>
+                {
+                    b.HasOne("Rankomizer.Domain.Catalog.Item", null)
+                        .WithOne()
+                        .HasForeignKey("Rankomizer.Domain.Catalog.Movie", "ItemId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_movies_items_item_id");
                 });
 
             modelBuilder.Entity("Rankomizer.Domain.Catalog.Painting", b =>
                 {
-                    b.HasOne("Rankomizer.Domain.Catalog.CatalogEntry", null)
+                    b.HasOne("Rankomizer.Domain.Catalog.Item", null)
                         .WithOne()
                         .HasForeignKey("Rankomizer.Domain.Catalog.Painting", "ItemId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
-                        .HasConstraintName("fk_paintings_catalog_entry_item_id");
+                        .HasConstraintName("fk_paintings_items_item_id");
                 });
 
             modelBuilder.Entity("Rankomizer.Domain.Catalog.Song", b =>
                 {
-                    b.HasOne("Rankomizer.Domain.Catalog.CatalogEntry", null)
+                    b.HasOne("Rankomizer.Domain.Catalog.Item", null)
                         .WithOne()
                         .HasForeignKey("Rankomizer.Domain.Catalog.Song", "ItemId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
-                        .HasConstraintName("fk_songs_catalog_entry_item_id");
+                        .HasConstraintName("fk_songs_items_item_id");
+                });
+
+            modelBuilder.Entity("Rankomizer.Domain.Catalog.Collection", b =>
+                {
+                    b.Navigation("Items");
+                });
+
+            modelBuilder.Entity("Rankomizer.Domain.Catalog.Gauntlet", b =>
+                {
+                    b.Navigation("Duels");
+
+                    b.Navigation("RosterItems");
                 });
 #pragma warning restore 612, 618
         }

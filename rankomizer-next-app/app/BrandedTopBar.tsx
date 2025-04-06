@@ -70,8 +70,9 @@ export default function BrandedTopBar() {
             <Button
               variant="ghost"
               className="text-primary-foreground dark:text-white hover:bg-primary/90 dark:hover:bg-gray-800"
+              onClick={() => router.push("/collections")}
             >
-              Dashboard
+              Collections
             </Button>
             <Button
               variant="ghost"

@@ -53,59 +53,20 @@ namespace Rankomizer.Infrastructure.Database.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Movies",
+                name: "Items",
                 columns: table => new
                 {
                     item_id = table.Column<Guid>(type: "uuid", nullable: false),
-                    tmdb_id = table.Column<int>(type: "integer", nullable: false),
-                    imdb_id = table.Column<string>(type: "text", nullable: false),
-                    source_json = table.Column<JsonDocument>(type: "jsonb", nullable: true),
+                    name = table.Column<string>(type: "text", nullable: false),
+                    description = table.Column<string>(type: "text", nullable: false),
+                    image_url = table.Column<string>(type: "text", nullable: false),
+                    item_type = table.Column<int>(type: "integer", nullable: false),
                     created_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     updated_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("pk_movies", x => x.item_id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "paintings",
-                columns: table => new
-                {
-                    item_id = table.Column<Guid>(type: "uuid", nullable: false),
-                    title = table.Column<string>(type: "text", nullable: false),
-                    description = table.Column<string>(type: "text", nullable: true),
-                    image_url = table.Column<string>(type: "text", nullable: true),
-                    artist = table.Column<string>(type: "text", nullable: true),
-                    year_created = table.Column<int>(type: "integer", nullable: false),
-                    medium = table.Column<string>(type: "text", nullable: true),
-                    location = table.Column<string>(type: "text", nullable: true),
-                    created_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    updated_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("pk_paintings", x => x.item_id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "songs",
-                columns: table => new
-                {
-                    item_id = table.Column<Guid>(type: "uuid", nullable: false),
-                    title = table.Column<string>(type: "text", nullable: false),
-                    description = table.Column<string>(type: "text", nullable: true),
-                    image_url = table.Column<string>(type: "text", nullable: true),
-                    artist = table.Column<string>(type: "text", nullable: true),
-                    album = table.Column<string>(type: "text", nullable: true),
-                    release_year = table.Column<int>(type: "integer", nullable: false),
-                    duration = table.Column<string>(type: "text", nullable: true),
-                    created_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    updated_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("pk_songs", x => x.item_id);
+                    table.PrimaryKey("PK_Items", x => x.item_id);
                 });
 
             migrationBuilder.CreateTable(
@@ -214,6 +175,116 @@ namespace Rankomizer.Infrastructure.Database.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "Collections",
+                columns: table => new
+                {
+                    id = table.Column<Guid>(type: "uuid", nullable: false),
+                    name = table.Column<string>(type: "text", nullable: false),
+                    description = table.Column<string>(type: "text", nullable: false),
+                    created_by_user_id = table.Column<Guid>(type: "uuid", nullable: false),
+                    created_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("pk_collections", x => x.id);
+                    table.ForeignKey(
+                        name: "fk_collections_asp_net_users_created_by_user_id",
+                        column: x => x.created_by_user_id,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Movies",
+                columns: table => new
+                {
+                    item_id = table.Column<Guid>(type: "uuid", nullable: false),
+                    tmdb_id = table.Column<int>(type: "integer", nullable: false),
+                    imdb_id = table.Column<string>(type: "text", nullable: false),
+                    source_json = table.Column<JsonDocument>(type: "jsonb", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Movies", x => x.item_id);
+                    table.ForeignKey(
+                        name: "fk_movies_items_item_id",
+                        column: x => x.item_id,
+                        principalTable: "Items",
+                        principalColumn: "item_id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Paintings",
+                columns: table => new
+                {
+                    item_id = table.Column<Guid>(type: "uuid", nullable: false),
+                    title = table.Column<string>(type: "text", nullable: false),
+                    artist = table.Column<string>(type: "text", nullable: true),
+                    year_created = table.Column<int>(type: "integer", nullable: false),
+                    medium = table.Column<string>(type: "text", nullable: true),
+                    location = table.Column<string>(type: "text", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Paintings", x => x.item_id);
+                    table.ForeignKey(
+                        name: "fk_paintings_items_item_id",
+                        column: x => x.item_id,
+                        principalTable: "Items",
+                        principalColumn: "item_id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Songs",
+                columns: table => new
+                {
+                    item_id = table.Column<Guid>(type: "uuid", nullable: false),
+                    title = table.Column<string>(type: "text", nullable: false),
+                    artist = table.Column<string>(type: "text", nullable: true),
+                    album = table.Column<string>(type: "text", nullable: true),
+                    source_json = table.Column<JsonDocument>(type: "jsonb", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Songs", x => x.item_id);
+                    table.ForeignKey(
+                        name: "fk_songs_items_item_id",
+                        column: x => x.item_id,
+                        principalTable: "Items",
+                        principalColumn: "item_id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "CollectionItems",
+                columns: table => new
+                {
+                    id = table.Column<Guid>(type: "uuid", nullable: false),
+                    collection_id = table.Column<Guid>(type: "uuid", nullable: false),
+                    item_id = table.Column<Guid>(type: "uuid", nullable: false),
+                    order = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("pk_collection_items", x => x.id);
+                    table.ForeignKey(
+                        name: "fk_collection_items_collections_collection_id",
+                        column: x => x.collection_id,
+                        principalTable: "Collections",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "fk_collection_items_items_item_id",
+                        column: x => x.item_id,
+                        principalTable: "Items",
+                        principalColumn: "item_id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
             migrationBuilder.CreateIndex(
                 name: "ix_asp_net_role_claims_role_id",
                 table: "AspNetRoleClaims",
@@ -250,6 +321,21 @@ namespace Rankomizer.Infrastructure.Database.Migrations
                 table: "AspNetUsers",
                 column: "normalized_user_name",
                 unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "ix_collection_items_collection_id",
+                table: "CollectionItems",
+                column: "collection_id");
+
+            migrationBuilder.CreateIndex(
+                name: "ix_collection_items_item_id",
+                table: "CollectionItems",
+                column: "item_id");
+
+            migrationBuilder.CreateIndex(
+                name: "ix_collections_created_by_user_id",
+                table: "Collections",
+                column: "created_by_user_id");
         }
 
         /// <inheritdoc />
@@ -271,16 +357,25 @@ namespace Rankomizer.Infrastructure.Database.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
+                name: "CollectionItems");
+
+            migrationBuilder.DropTable(
                 name: "Movies");
 
             migrationBuilder.DropTable(
-                name: "paintings");
+                name: "Paintings");
 
             migrationBuilder.DropTable(
-                name: "songs");
+                name: "Songs");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");
+
+            migrationBuilder.DropTable(
+                name: "Collections");
+
+            migrationBuilder.DropTable(
+                name: "Items");
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");

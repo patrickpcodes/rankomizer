@@ -6,6 +6,7 @@ using Rankomizer.Application.Catalog;
 using Rankomizer.Domain.Catalog;
 using Rankomizer.Infrastructure.Database;
 using TMDbLib.Objects.Movies;
+using Movie = Rankomizer.Domain.Catalog.Movie;
 
 namespace Rankomizer.Infrastructure.Catalog;
 
@@ -37,13 +38,13 @@ public class CatalogRepository : ICatalogRepository
         return result;
     }
 
-    public async Task<List<MovieItem>> GetAllMovies()
+    public async Task<List<Movie>> GetAllMovies()
     {
        var movieList = await _context.Movies.ToListAsync();
 
        foreach ( var movie in movieList )
        {
-          Movie tempMovie = movie.SourceJson.RootElement.Deserialize<Movie>(new JsonSerializerOptions
+          TMDbLib.Objects.Movies.Movie tempMovie = movie.SourceJson.RootElement.Deserialize<TMDbLib.Objects.Movies.Movie>(new JsonSerializerOptions
           {
               PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
               IncludeFields = true,

@@ -3,9 +3,8 @@ using System.Text.Json;
 
 namespace Rankomizer.Domain.Catalog;
 
-public class MovieItem : CatalogEntry
+public class Movie : Item
 {
-
     public int TmdbId { get; set; }
     public string ImdbId { get; set; } 
     

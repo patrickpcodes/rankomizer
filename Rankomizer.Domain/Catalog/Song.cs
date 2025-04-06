@@ -1,14 +1,13 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Text.Json;
 
 namespace Rankomizer.Domain.Catalog;
 
-public class Song: CatalogEntry
+public class Song: Item
 {
     public string Title { get; set; } = string.Empty;
-    public string? Description { get; set; }
-    public string? ImageUrl { get; set; }
     public string? Artist { get; set; }
     public string? Album { get; set; }
-    public int ReleaseYear { get; set; }
-    public string? Duration { get; set; }
+
+    public JsonDocument? SourceJson { get; set; }
 }

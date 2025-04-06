@@ -15,6 +15,8 @@ public static class DependencyInjection
         // REMARK: If you want to use Controllers, you'll need this.
         services.AddControllers().AddJsonOptions(options =>
         {
+            // Enums are returned as strings
+            options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
             // options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
             // options.JsonSerializerOptions.IncludeFields = true;
             // options.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.Never;

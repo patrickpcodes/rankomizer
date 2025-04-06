@@ -16,7 +16,7 @@ public static class SeedApplication
 
         var userSeeding = new UserSeeding( userManager, app.Configuration );
         userSeeding.SeedDatabase().GetAwaiter().GetResult();
-        ItemSeeding.SeedItemsAsync( appContextDb, config ).GetAwaiter().GetResult();
+        ItemSeeding.SeedItemsAsync( appContextDb, userManager, config ).GetAwaiter().GetResult();
         //Seed all other data
         //var dataSeeding = new DataSeeding();
         //dataSeeding.SeedDatabase().GetAwaiter().GetResult();

@@ -34,7 +34,12 @@ public class Tests : IClassFixture<IntegrationTestFactory<Program, ApplicationDb
         var text = await response.Content.ReadAsStringAsync();
         response.EnsureSuccessStatusCode();
     }
+    [Fact]
+    public async Task Testing(){
+      //Assert.Pass();
+      Console.WriteLine("I am in this test");
 
+    }
     [Fact]
     public async Task Baz()
     {

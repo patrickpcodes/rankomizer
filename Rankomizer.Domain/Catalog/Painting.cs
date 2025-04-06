@@ -2,7 +2,7 @@
 
 namespace Rankomizer.Domain.Catalog;
 
-public class Painting: CatalogEntry
+public class Painting: Item
 {
 
     public string Title { get; set; } = string.Empty;
