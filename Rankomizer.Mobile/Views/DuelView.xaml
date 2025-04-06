@@ -7,17 +7,17 @@
              BackgroundColor="White">
     <Grid>
         <!-- Duel UI -->
-        <Grid ColumnSpacing="20" Padding="20" IsVisible="{Binding IsSubmitting, Converter={StaticResource InverseBoolConverter}}">
+        <Grid ColumnSpacing="30" Padding="20" Margin="10" IsVisible="{Binding IsSubmitting, Converter={StaticResource InverseBoolConverter}}">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
 
-            <VerticalStackLayout Grid.Column="0" HorizontalOptions="Center">
+            <VerticalStackLayout Grid.Column="0" Padding ="5" Margin="5" HorizontalOptions="Center">
                 <Image Source="{Binding DuelLeft.ImageUrl}"
-                   HeightRequest="300"
-                   WidthRequest="200"
-                   Aspect="AspectFill">
+                    HeightRequest="{OnIdiom Phone=240, Tablet=330}"
+                    WidthRequest="{OnIdiom Phone=160, Tablet=220}"
+                   Aspect="AspectFit">
                     <Image.GestureRecognizers>
                         <TapGestureRecognizer Command="{Binding LeftTapGesture}" />
                     </Image.GestureRecognizers>
@@ -27,9 +27,9 @@
 
             <VerticalStackLayout Grid.Column="1" HorizontalOptions="Center">
                 <Image Source="{Binding DuelRight.ImageUrl}"
-                   HeightRequest="300"
-                   WidthRequest="200"
-                   Aspect="AspectFill">
+                    HeightRequest="{OnIdiom Phone=240, Tablet=330}"
+                    WidthRequest="{OnIdiom Phone=160, Tablet=220}"
+                   Aspect="AspectFit">
                     <Image.GestureRecognizers>
                         <TapGestureRecognizer Command="{Binding RightTapGesture}" />
                     </Image.GestureRecognizers>

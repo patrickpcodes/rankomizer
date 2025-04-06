@@ -4,23 +4,8 @@
              x:Class="Rankomizer.Mobile.Home.HomePage"
              xmlns:views="clr-namespace:Rankomizer.Mobile.Views"
              Title="HomePage">
-    <VerticalStackLayout Padding="20" Spacing="12">
-        <Label x:Name="ResultLabel"
-               Text="Waiting for duel..."
-               FontSize="18"
-               HorizontalOptions="Center" />
-
-        <Button Text="Start Gauntlet"
-                Clicked="OnStartGauntletClicked"
-                HorizontalOptions="Center" />
-        <Grid ColumnSpacing="10" RowSpacing="10" Padding="10">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="2*" />
-                <ColumnDefinition Width="*" />
-            </Grid.ColumnDefinitions>
-
-            <views:DuelView x:Name="DuelControl" Grid.Column="0" />
-            <views:RosterListView x:Name="RosterControl" Grid.Column="1" />
-        </Grid>
+    <VerticalStackLayout Padding="20" Spacing="16" VerticalOptions="Center">
+        <Label Text="Welcome to Rankomizer" FontSize="24" HorizontalOptions="Center" />
+        <Button Text="Start Gauntlet" Clicked="OnStartGauntletClicked" />
     </VerticalStackLayout>
 </ContentPage>
