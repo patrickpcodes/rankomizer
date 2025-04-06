@@ -46,6 +46,9 @@ public static class ItemSeeding
         {
             Name = "TMDB Collection: " + tmdbCollection.Name,
             Description = tmdbCollection.Overview,
+            ImageUrl = tmdbCollection.PosterPath != null
+                ? $"https://image.tmdb.org/t/p/w500{tmdbCollection.PosterPath}"
+                : null,
             CreatedByUserId = user.Id,
             CreatedByUser = user,
             Items = new List<CollectionItem>()
@@ -115,11 +118,9 @@ public static class ItemSeeding
             }
             else
             {
-                var movieList = new List<Movie>();
-                var searchMovieList = new List<SearchMovie>();
                 var tmdbApiKey = configuration["Tmdb:ApiKey"];
                 TMDbClient client = new TMDbClient( tmdbApiKey );
-                var collectionIds = new List<int>() { 645, 10, 230, 119 };
+                var collectionIds = new List<int>() { 645, 10, 230, 119,1241,9485, 131292, 87359 };
                 var userRecord = configuration.GetSection( "poweruser" ).Get<UserRecord>();
                 var user = await userManager.FindByEmailAsync( userRecord.Email );
                 if ( user == null )
@@ -130,19 +131,8 @@ public static class ItemSeeding
                 foreach ( var collectionId in collectionIds )
                 {
                     await SeedMovieCollectionAsync( context, client, user, collectionId );
-                    // var collection = await client.GetCollectionAsync( collectionId );
-                    // searchMovieList.AddRange( collection.Parts );
                 }
 
-
-                // context.Movies.AddRange( movieList );
-                // await context.SaveChangesAsync();
-                //
-                // var movies = await context.Movies.ToListAsync();
-                // var jsonString = JsonSerializer.Serialize( movies, JsonOptions.CamelCase );
-                // // Save the JSON string to a file
-                // var filePath = Path.Combine( Directory.GetCurrentDirectory(), "SeedData", movieListFileName );
-                // await File.WriteAllTextAsync( filePath, jsonString );
             }
         }
 

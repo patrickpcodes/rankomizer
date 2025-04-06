@@ -1,5 +1,4 @@
-﻿using Rankomizer.Application.DTOs;
-using Rankomizer.Domain.Catalog;
+﻿using Rankomizer.Domain.Catalog;
 
 namespace Rankomizer.Application.Gauntlet;
 

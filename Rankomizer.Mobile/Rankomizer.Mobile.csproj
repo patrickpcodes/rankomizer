@@ -76,7 +76,23 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <ProjectReference Include="..\Rankomizer.Domain\Rankomizer.Domain.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Compile Update="Views\DuelView.xaml.cs">
+	    <DependentUpon>DuelView.xaml</DependentUpon>
+	  </Compile>
+	</ItemGroup>
+
+	<ItemGroup>
 	  <MauiXaml Update="Home\HomePage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Views\DuelView.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Views\RosterListView.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	</ItemGroup>

@@ -37,7 +37,14 @@ builder.Services.AddCors( options =>
               .AllowCredentials(); // This is important when credentials are involved
     } );
 } );
-
+builder.WebHost.ConfigureKestrel(options =>
+{
+    options.ListenAnyIP(5000); // HTTP
+    options.ListenAnyIP(7135, listenOptions =>
+    {
+        listenOptions.UseHttps();
+    });
+});
 
 WebApplication app = builder.Build();
 

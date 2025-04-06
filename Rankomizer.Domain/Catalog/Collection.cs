@@ -8,6 +8,7 @@ public class Collection
 
     public string Name { get; set; } = null!;
     public string Description { get; set; }
+    public string ImageUrl { get; set; }
 
     public Guid CreatedByUserId { get; set; }
     public ApplicationUser CreatedByUser { get; set; }

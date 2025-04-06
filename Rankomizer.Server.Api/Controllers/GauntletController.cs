@@ -2,9 +2,9 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Rankomizer.Application.DTOs;
 using Rankomizer.Application.Gauntlet;
 using Rankomizer.Domain.Catalog;
+using Rankomizer.Domain.DTOs;
 using Rankomizer.Infrastructure.Database;
 
 namespace Rankomizer.Server.Api.Controllers;
@@ -114,7 +114,7 @@ public class GauntletController : ControllerBase
     }
     
     [HttpPost("{gauntletId}/start")]
-    public async Task<ActionResult<DuelDto?>> StartGauntlet(Guid gauntletId)
+    public async Task<ActionResult<DuelResponseDto?>> StartGauntlet(Guid gauntletId)
     {
         var duel = await _gauntletService.GetNextPendingDuelAsync(gauntletId);
         if (duel == null)

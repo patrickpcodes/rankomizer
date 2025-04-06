@@ -1,6 +1,10 @@
 ﻿using CommunityToolkit.Maui;
 using Microsoft.Extensions.Logging;
+using Rankomizer.Mobile.ViewModels;
 using Syncfusion.Maui.Toolkit.Hosting;
+using System.Text.Json.Serialization;
+using System.Text.Json;
+using Rankomizer.Domain.DTOs;
 
 namespace Rankomizer.Mobile;
 
@@ -28,8 +32,17 @@ public static class MauiProgram
 		builder.Logging.AddDebug();
 		builder.Services.AddLogging(configure => configure.AddDebug());
 #endif
+        //builder.Services.AddSingleton( new JsonSerializerOptions
+        //{
+        //    Converters = { new JsonStringEnumConverter( JsonNamingPolicy.CamelCase ), new RosterItemStatusJsonConverter() }
+        //} );
+        var jsonOptions = new JsonSerializerOptions();
+        jsonOptions.Converters.Add( new RosterItemStatusJsonConverter() );
+        jsonOptions.Converters.Add( new ItemTypeJsonConverter() );
 
-		builder.Services.AddSingleton<ProjectRepository>();
+        builder.Services.AddSingleton( jsonOptions );
+
+        builder.Services.AddSingleton<ProjectRepository>();
 		builder.Services.AddSingleton<TaskRepository>();
 		builder.Services.AddSingleton<CategoryRepository>();
 		builder.Services.AddSingleton<TagRepository>();
@@ -41,7 +54,16 @@ public static class MauiProgram
 
 		builder.Services.AddTransientWithShellRoute<ProjectDetailPage, ProjectDetailPageModel>("project");
 		builder.Services.AddTransientWithShellRoute<TaskDetailPage, TaskDetailPageModel>("task");
-		
-		return builder.Build();
+        
+        //HttpClient is a singleton to only have one accros the app
+        //TODO Manage the cookies
+        builder.Services.AddSingleton<HttpClient>();
+        builder.Services.AddSingleton<GauntletApiService>();
+
+        builder.Services.AddSingleton<GauntletViewModel>();
+
+
+
+        return builder.Build();
 	}
 }

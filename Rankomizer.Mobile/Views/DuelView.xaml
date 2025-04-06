@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             x:Class="Rankomizer.Mobile.Views.DuelView"
+             x:Name="DuelRoot"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:viewmodels="clr-namespace:Rankomizer.Mobile.ViewModels"
+             BackgroundColor="White">
+    <Grid>
+        <!-- Duel UI -->
+        <Grid ColumnSpacing="20" Padding="20" IsVisible="{Binding IsSubmitting, Converter={StaticResource InverseBoolConverter}}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <VerticalStackLayout Grid.Column="0" HorizontalOptions="Center">
+                <Image Source="{Binding DuelLeft.ImageUrl}"
+                   HeightRequest="300"
+                   WidthRequest="200"
+                   Aspect="AspectFill">
+                    <Image.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding LeftTapGesture}" />
+                    </Image.GestureRecognizers>
+                </Image>
+                <Label Text="{Binding DuelLeftTitle}" FontAttributes="Bold" FontSize="16" HorizontalTextAlignment="Center" TextColor="Black"/>
+            </VerticalStackLayout>
+
+            <VerticalStackLayout Grid.Column="1" HorizontalOptions="Center">
+                <Image Source="{Binding DuelRight.ImageUrl}"
+                   HeightRequest="300"
+                   WidthRequest="200"
+                   Aspect="AspectFill">
+                    <Image.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding RightTapGesture}" />
+                    </Image.GestureRecognizers>
+                </Image>
+                <Label Text="{Binding DuelRightTitle}" FontAttributes="Bold" FontSize="16" HorizontalTextAlignment="Center" TextColor="Black"/>
+            </VerticalStackLayout>
+        </Grid>
+
+        <!-- Spinner Overlay -->
+        <ActivityIndicator IsRunning="{Binding IsSubmitting}"
+                       IsVisible="{Binding IsSubmitting}"
+                       VerticalOptions="Center"
+                       HorizontalOptions="Center"
+                       WidthRequest="40"
+                       HeightRequest="40"
+                       Color="Gray" />
+    </Grid>
+
+</ContentView>

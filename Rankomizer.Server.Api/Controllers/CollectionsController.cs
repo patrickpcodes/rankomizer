@@ -1,15 +1,15 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Rankomizer.Application.DTOs;
 using Rankomizer.Domain.Catalog;
+using Rankomizer.Domain.DTOs;
 using Rankomizer.Infrastructure.Database;
 
 namespace Rankomizer.Server.Api.Controllers;
 
 [AllowAnonymous]
 [ApiController]
-[Route("[controller]")]
+[Route("api/[controller]")]
 public class CollectionsController: ControllerBase
 {
     private readonly ApplicationDbContext _context;
@@ -17,8 +17,20 @@ public class CollectionsController: ControllerBase
     {
         _context = context;
     }
+
+    [HttpGet]
+    public async Task<ActionResult<IEnumerable<Collection>>> GetCollections()
+    {
+        var collections = await _context.Collections.AsNoTracking()
+                                        // .Include( c => c.Items )
+                                        // .ThenInclude( ci => ci.Item )
+                                        .Where( d =>
+                                            d.CreatedByUserId == Guid.Parse( "019609e6-13a1-7d1c-946d-c55523a3a5e7" ) )
+                                        .ToListAsync();
+        return Ok(collections);
+    }
     
-    [HttpGet("collections/{collectionId}")]
+    [HttpGet("{collectionId}")]
     public async Task<ActionResult<CollectionDto>> GetCollectionWithItems(Guid collectionId)
     {
         var collection = await _context.Collections
@@ -34,6 +46,7 @@ public class CollectionsController: ControllerBase
             Id = collection.Id,
             Name = collection.Name,
             Description = collection.Description,
+            ImageUrl = collection.ImageUrl,
             Items = collection.Items.Select(ci =>
             {
                 var item = ci.Item;
