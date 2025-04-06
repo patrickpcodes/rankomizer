@@ -13,7 +13,7 @@ using Rankomizer.Infrastructure.Database;
 namespace Rankomizer.Infrastructure.Database.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250405235442_Initial")]
+    [Migration("20250406025333_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -221,6 +221,91 @@ namespace Rankomizer.Infrastructure.Database.Migrations
                     b.ToTable("CollectionItems", (string)null);
                 });
 
+            modelBuilder.Entity("Rankomizer.Domain.Catalog.Duel", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
+
+                    b.Property<Guid>("GauntletId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("gauntlet_id");
+
+                    b.Property<Guid>("RosterItemAId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("roster_item_a_id");
+
+                    b.Property<Guid>("RosterItemBId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("roster_item_b_id");
+
+                    b.Property<Guid?>("WinnerRosterItemId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("winner_roster_item_id");
+
+                    b.HasKey("Id")
+                        .HasName("pk_duels");
+
+                    b.HasIndex("GauntletId")
+                        .HasDatabaseName("ix_duels_gauntlet_id");
+
+                    b.HasIndex("RosterItemAId")
+                        .HasDatabaseName("ix_duels_roster_item_a_id");
+
+                    b.HasIndex("RosterItemBId")
+                        .HasDatabaseName("ix_duels_roster_item_b_id");
+
+                    b.HasIndex("WinnerRosterItemId")
+                        .HasDatabaseName("ix_duels_winner_roster_item_id");
+
+                    b.ToTable("Duels", (string)null);
+                });
+
+            modelBuilder.Entity("Rankomizer.Domain.Catalog.Gauntlet", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<Guid>("CollectionId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("collection_id");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("text")
+                        .HasColumnName("description");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("name");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("user_id");
+
+                    b.HasKey("Id")
+                        .HasName("pk_gauntlets");
+
+                    b.HasIndex("CollectionId")
+                        .HasDatabaseName("ix_gauntlets_collection_id");
+
+                    b.HasIndex("UserId")
+                        .HasDatabaseName("ix_gauntlets_user_id");
+
+                    b.ToTable("Gauntlets", (string)null);
+                });
+
             modelBuilder.Entity("Rankomizer.Domain.Catalog.Item", b =>
                 {
                     b.Property<Guid>("ItemId")
@@ -260,6 +345,49 @@ namespace Rankomizer.Infrastructure.Database.Migrations
                     b.ToTable("Items", (string)null);
 
                     b.UseTptMappingStrategy();
+                });
+
+            modelBuilder.Entity("Rankomizer.Domain.Catalog.RosterItem", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<Guid>("GauntletId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("gauntlet_id");
+
+                    b.Property<Guid>("ItemId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("item_id");
+
+                    b.Property<int>("Losses")
+                        .HasColumnType("integer")
+                        .HasColumnName("losses");
+
+                    b.Property<double>("Score")
+                        .HasColumnType("double precision")
+                        .HasColumnName("score");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("integer")
+                        .HasColumnName("status");
+
+                    b.Property<int>("Wins")
+                        .HasColumnType("integer")
+                        .HasColumnName("wins");
+
+                    b.HasKey("Id")
+                        .HasName("pk_roster_items");
+
+                    b.HasIndex("GauntletId")
+                        .HasDatabaseName("ix_roster_items_gauntlet_id");
+
+                    b.HasIndex("ItemId")
+                        .HasDatabaseName("ix_roster_items_item_id");
+
+                    b.ToTable("RosterItems", (string)null);
                 });
 
             modelBuilder.Entity("Rankomizer.Domain.User.ApplicationRole", b =>
@@ -383,6 +511,10 @@ namespace Rankomizer.Infrastructure.Database.Migrations
                         .IsRequired()
                         .HasColumnType("text")
                         .HasColumnName("imdb_id");
+
+                    b.Property<DateTime>("ReleaseDate")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("release_date");
 
                     b.Property<JsonDocument>("SourceJson")
                         .HasColumnType("jsonb")
@@ -537,6 +669,85 @@ namespace Rankomizer.Infrastructure.Database.Migrations
                     b.Navigation("Item");
                 });
 
+            modelBuilder.Entity("Rankomizer.Domain.Catalog.Duel", b =>
+                {
+                    b.HasOne("Rankomizer.Domain.Catalog.Gauntlet", "Gauntlet")
+                        .WithMany("Duels")
+                        .HasForeignKey("GauntletId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_duels_gauntlets_gauntlet_id");
+
+                    b.HasOne("Rankomizer.Domain.Catalog.RosterItem", "RosterItemA")
+                        .WithMany()
+                        .HasForeignKey("RosterItemAId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_duels_roster_items_roster_item_a_id");
+
+                    b.HasOne("Rankomizer.Domain.Catalog.RosterItem", "RosterItemB")
+                        .WithMany()
+                        .HasForeignKey("RosterItemBId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_duels_roster_items_roster_item_b_id");
+
+                    b.HasOne("Rankomizer.Domain.Catalog.RosterItem", "WinnerRosterItem")
+                        .WithMany()
+                        .HasForeignKey("WinnerRosterItemId")
+                        .HasConstraintName("fk_duels_roster_items_winner_roster_item_id");
+
+                    b.Navigation("Gauntlet");
+
+                    b.Navigation("RosterItemA");
+
+                    b.Navigation("RosterItemB");
+
+                    b.Navigation("WinnerRosterItem");
+                });
+
+            modelBuilder.Entity("Rankomizer.Domain.Catalog.Gauntlet", b =>
+                {
+                    b.HasOne("Rankomizer.Domain.Catalog.Collection", "Collection")
+                        .WithMany()
+                        .HasForeignKey("CollectionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_gauntlets_collections_collection_id");
+
+                    b.HasOne("Rankomizer.Domain.User.ApplicationUser", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_gauntlets_asp_net_users_user_id");
+
+                    b.Navigation("Collection");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Rankomizer.Domain.Catalog.RosterItem", b =>
+                {
+                    b.HasOne("Rankomizer.Domain.Catalog.Gauntlet", "Gauntlet")
+                        .WithMany("RosterItems")
+                        .HasForeignKey("GauntletId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_roster_items_gauntlets_gauntlet_id");
+
+                    b.HasOne("Rankomizer.Domain.Catalog.Item", "Item")
+                        .WithMany()
+                        .HasForeignKey("ItemId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_roster_items_items_item_id");
+
+                    b.Navigation("Gauntlet");
+
+                    b.Navigation("Item");
+                });
+
             modelBuilder.Entity("Rankomizer.Domain.Catalog.Movie", b =>
                 {
                     b.HasOne("Rankomizer.Domain.Catalog.Item", null)
@@ -570,6 +781,13 @@ namespace Rankomizer.Infrastructure.Database.Migrations
             modelBuilder.Entity("Rankomizer.Domain.Catalog.Collection", b =>
                 {
                     b.Navigation("Items");
+                });
+
+            modelBuilder.Entity("Rankomizer.Domain.Catalog.Gauntlet", b =>
+                {
+                    b.Navigation("Duels");
+
+                    b.Navigation("RosterItems");
                 });
 #pragma warning restore 612, 618
         }

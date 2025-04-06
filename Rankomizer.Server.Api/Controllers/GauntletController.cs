@@ -2,10 +2,10 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Rankomizer.Application.DTOs;
 using Rankomizer.Application.Gauntlet;
 using Rankomizer.Domain.Catalog;
 using Rankomizer.Infrastructure.Database;
-using Rankomizer.Infrastructure.DTOs;
 
 namespace Rankomizer.Server.Api.Controllers;
 
@@ -63,6 +63,7 @@ public class GauntletController : ControllerBase
                         {
                             TmdbId = movie.TmdbId,
                             ImdbId = movie.ImdbId,
+                            ReleaseDate = movie.ReleaseDate,
                             SourceJson = movie.SourceJson,
                         };
                         break;
@@ -85,6 +86,7 @@ public class GauntletController : ControllerBase
     }
 
 
+    [Authorize]
     [HttpPost( "create" )]
     public async Task<ActionResult<Gauntlet>> CreateGauntlet( [FromBody] CreateGauntletRequest request )
     {
@@ -116,9 +118,21 @@ public class GauntletController : ControllerBase
     {
         var duel = await _gauntletService.GetNextPendingDuelAsync(gauntletId);
         if (duel == null)
-            return Ok(null);
+        {
+            var roster = await _gauntletService.GetRosterAsync(gauntletId);
+            var rosterDto = roster
+                            .OrderByDescending(ri => ri.Score)
+                            .ThenBy(ri => ri.Item.Name)
+                            .Select(ri => ri.ToDto())
+                            .ToList();
+            return Ok(new DuelResponseDto { Duel = null, Roster = rosterDto });
+        }
 
-        return Ok(duel.ToDto());
+        return Ok(new DuelResponseDto
+        {
+            Duel = duel.ToDto(),
+            Roster = duel.Gauntlet.RosterItems.Select(ri => ri.ToDto()).ToList()
+        });
     }
 
     [HttpPost("duel/submit")]
@@ -130,9 +144,23 @@ public class GauntletController : ControllerBase
         );
 
         if (nextDuel == null)
-            return Ok(null); // gauntlet is complete
-        var dto = nextDuel.ToDto();
-        return Ok(dto);
+        {
+            var duel = await _context.Duels
+                                .Include(d => d.Gauntlet)
+                                .ThenInclude(g => g.RosterItems)
+                                .ThenInclude(ri => ri.Item)
+                                .FirstOrDefaultAsync(d => d.Id == request.DuelId);
+
+            var roster = duel?.Gauntlet?.RosterItems.Select(ri => ri.ToDto()).ToList() ?? new();
+
+            return Ok(new DuelResponseDto { Duel = null, Roster = roster });
+        }
+
+        return Ok(new DuelResponseDto
+        {
+            Duel = nextDuel.ToDto(),
+            Roster = nextDuel.Gauntlet.RosterItems.Select(ri => ri.ToDto()).ToList()
+        });
     }
 }
 
@@ -153,10 +181,7 @@ public static class DuelExtensions
             DuelId = duel.Id,
             OptionA = duel.RosterItemA.ToDto(),
             OptionB = duel.RosterItemB.ToDto(),
-            Roster = gauntlet.RosterItems
-                             .OrderByDescending(r => r.Wins)
-                             .Select(ri => ri.ToDto())
-                             .ToList()
+
         };
     }
 
@@ -181,6 +206,7 @@ public static class DuelExtensions
                 {
                     TmdbId = m.TmdbId,
                     ImdbId = m.ImdbId,
+                    ReleaseDate = m.ReleaseDate,
                     // SourceJson = m.SourceJson,
                 },
                 // Song s => new SongDetailsDto

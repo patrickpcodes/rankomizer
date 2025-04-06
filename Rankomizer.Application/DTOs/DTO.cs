@@ -1,7 +1,7 @@
 ﻿using System.Text.Json;
 using Rankomizer.Domain.Catalog;
 
-namespace Rankomizer.Infrastructure.DTOs;
+namespace Rankomizer.Application.DTOs;
 
 public class CollectionDto
 {
@@ -27,6 +27,7 @@ public class MovieDetailsDto
 {
     public int TmdbId { get; set; }
     public string ImdbId { get; set; } 
+    public DateTime ReleaseDate { get; set; }
     
     public JsonDocument? SourceJson { get; set; }
 }
@@ -66,6 +67,11 @@ public class DuelDto
     public Guid DuelId { get; set; }
     public RosterItemDto OptionA { get; set; }
     public RosterItemDto OptionB { get; set; }
+}
+
+public class DuelResponseDto
+{
+    public DuelDto? Duel { get; set; }
     public List<RosterItemDto> Roster { get; set; } = new();
 }
 

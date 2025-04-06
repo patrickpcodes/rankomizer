@@ -1,9 +1,9 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Rankomizer.Application.DTOs;
 using Rankomizer.Domain.Catalog;
 using Rankomizer.Infrastructure.Database;
-using Rankomizer.Infrastructure.DTOs;
 
 namespace Rankomizer.Server.Api.Controllers;
 
@@ -55,6 +55,7 @@ public class CollectionsController: ControllerBase
                         {
                            TmdbId = movie.TmdbId,
                            ImdbId = movie.ImdbId,
+                            ReleaseDate = movie.ReleaseDate,
                            SourceJson = movie.SourceJson,
                         };
                         break;

@@ -1,4 +1,4 @@
-import GauntletDuel from "@/components/GauntletDuel";
+import GauntletDuel from "@/components/Gauntlet";
 
 export default function GauntletPage({ params }: { params: { id: string } }) {
   return (

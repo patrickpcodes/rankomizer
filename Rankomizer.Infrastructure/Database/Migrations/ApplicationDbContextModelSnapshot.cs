@@ -509,6 +509,10 @@ namespace Rankomizer.Infrastructure.Database.Migrations
                         .HasColumnType("text")
                         .HasColumnName("imdb_id");
 
+                    b.Property<DateTime>("ReleaseDate")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("release_date");
+
                     b.Property<JsonDocument>("SourceJson")
                         .HasColumnType("jsonb")
                         .HasColumnName("source_json");

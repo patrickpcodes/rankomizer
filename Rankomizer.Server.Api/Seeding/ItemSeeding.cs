@@ -65,6 +65,7 @@ public static class ItemSeeding
                 ItemType = ItemType.Movie,
                 TmdbId = movie.Id,
                 ImdbId = movie.ImdbId,
+                ReleaseDate = movie.ReleaseDate == null ? new DateTime() : DateTime.SpecifyKind(movie.ReleaseDate.Value, DateTimeKind.Utc),
                 SourceJson = JsonDocument.Parse( JsonSerializer.Serialize( movie, JsonOptions.CamelCase ) )
             } );
         }

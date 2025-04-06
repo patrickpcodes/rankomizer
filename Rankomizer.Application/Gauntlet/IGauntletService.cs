@@ -1,4 +1,5 @@
-﻿using Rankomizer.Domain.Catalog;
+﻿using Rankomizer.Application.DTOs;
+using Rankomizer.Domain.Catalog;
 
 namespace Rankomizer.Application.Gauntlet;
 
@@ -9,4 +10,5 @@ public interface IGauntletService
 
     Task<Duel?> GetNextPendingDuelAsync(Guid gauntletId);
     Task<Duel?> SubmitDuelResultAsync(Guid duelId, Guid winnerRosterItemId);
+    Task<List<RosterItem>> GetRosterAsync(Guid gauntletId);
 }

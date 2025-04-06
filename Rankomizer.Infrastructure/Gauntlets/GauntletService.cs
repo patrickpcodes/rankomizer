@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Rankomizer.Application.DTOs;
 using Rankomizer.Application.Gauntlet;
 using Rankomizer.Domain.Catalog;
 using Rankomizer.Infrastructure.Database;
@@ -35,7 +36,15 @@ public class GauntletService : IGauntletService
                              .OrderBy( d => d.Id )
                              .FirstOrDefaultAsync();
     }
+    public async Task<List<RosterItem>> GetRosterAsync(Guid gauntletId)
+    {
+        var rosterItems = await _context.RosterItems
+                                   .Where(ri => ri.GauntletId == gauntletId)
+                                   .Include(ri => ri.Item)
+                                   .ToListAsync();
 
+        return rosterItems;
+    }
     public async Task<Duel?> SubmitDuelResultAsync( Guid duelId, Guid winnerRosterItemId )
     {
         var duel = await _context.Duels
@@ -62,6 +71,18 @@ public class GauntletService : IGauntletService
         winner.Wins += 1;
         loser.Losses += 1;
 
+        
+        const double K = 32.0;
+        // Elo rating update
+        var Ra = winner.Score;
+        var Rb = loser.Score;
+
+        double Ea = 1.0 / (1.0 + Math.Pow(10, (Rb - Ra) / 400.0));
+        double Eb = 1.0 / (1.0 + Math.Pow(10, (Ra - Rb) / 400.0));
+
+        winner.Score = Math.Round(Ra + K * (1 - Ea), 2);
+        loser.Score  = Math.Round(Rb + K * (0 - Eb), 2);
+        
         await _context.SaveChangesAsync();
 
         // return the next duel
@@ -98,7 +119,12 @@ public class GauntletService : IGauntletService
             Id = Guid.NewGuid(),
             Gauntlet = gauntlet,
             ItemId = ci.ItemId,
-            Item = ci.Item
+            Item = ci.Item,
+            
+            Wins = 0,
+            Losses = 0,
+            Score = 1600.0,
+            Status = RosterItemStatus.Active
         } ).ToList();
 
         gauntlet.RosterItems = rosterItems;
