@@ -18,6 +18,13 @@ jobs:
         uses: actions/setup-dotnet@v3
         with:
           dotnet-version: '9.0.x'
+          
+      - name: Update Appsetting.json
+        env:
+          API_APPSETTINGS_JSON: ${{secrets.API_APPSETTINGS_JSON}}
+        shell: bash
+        run: |
+          echo "$API_APPSETTINGS_JSON" > Rankomizer.Server.Api/appsettings.json
 
       - name: Restore Dependencies
         run: dotnet restore ./Rankomizer.Tests.Integration/Rankomizer.Tests.Integration.csproj 
