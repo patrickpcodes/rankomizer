@@ -6,13 +6,16 @@ namespace Rankomizer.Domain.DTOs;
 
 public class CollectionDto
 {
-    [JsonPropertyName("id")]
+    [JsonPropertyName( "id" )]
     public Guid Id { get; set; }
-    [JsonPropertyName("name")]
+
+    [JsonPropertyName( "name" )]
     public string Name { get; set; } = null!;
-    [JsonPropertyName("description")]
+
+    [JsonPropertyName( "description" )]
     public string Description { get; set; }
-    [JsonPropertyName("imageUrl")]
+
+    [JsonPropertyName( "imageUrl" )]
     public string ImageUrl { get; set; }
 
     public List<ItemDto> Items { get; set; } = new();
@@ -32,9 +35,9 @@ public class ItemDto
 public class MovieDetailsDto
 {
     public int TmdbId { get; set; }
-    public string ImdbId { get; set; } 
+    public string ImdbId { get; set; }
     public DateTime ReleaseDate { get; set; }
-    
+
     public JsonDocument? SourceJson { get; set; }
 }
 
@@ -53,9 +56,11 @@ public class GauntletDto
 
     public List<RosterItemDto> Roster { get; set; } = new();
 }
+
 public class RosterItemStatusJsonConverter : JsonConverter<RosterItemStatus>
 {
-    public override RosterItemStatus Read( ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options )
+    public override RosterItemStatus Read( ref Utf8JsonReader reader, Type typeToConvert,
+                                           JsonSerializerOptions options )
     {
         var value = reader.GetString();
 
@@ -94,45 +99,54 @@ public class ItemTypeJsonConverter : JsonConverter<ItemType>
         writer.WriteStringValue( value.ToString() ); // Outputs "Active", "Skipped", etc.
     }
 }
+
 public class RosterItemDto
 {
     [JsonPropertyName( "id" )]
     public Guid Id { get; set; }
+
     [JsonPropertyName( "status" )]
-    [JsonConverter( typeof( RosterItemStatusJsonConverter ) )]
+    [JsonConverter( typeof(RosterItemStatusJsonConverter) )]
     public RosterItemStatus Status { get; set; }
+
     [JsonPropertyName( "wins" )]
     public int Wins { get; set; }
+
     [JsonPropertyName( "losses" )]
     public int Losses { get; set; }
+
     [JsonPropertyName( "score" )]
     public double Score { get; set; }
-    [JsonPropertyName( "itemType" )]
 
-    [JsonConverter( typeof( ItemTypeJsonConverter ) )]
+    [JsonPropertyName( "itemType" )]
+    [JsonConverter( typeof(ItemTypeJsonConverter) )]
     public ItemType ItemType { get; set; }
+
     [JsonPropertyName( "name" )]
     public string Name { get; set; } = null!;
+
     [JsonPropertyName( "description" )]
     public string Description { get; set; }
+
     [JsonPropertyName( "imageUrl" )]
     public string ImageUrl { get; set; }
+
     [JsonPropertyName( "details" )]
 
     public object? Details { get; set; } // Type-specific fields (MovieDetailsDto, etc.)
 
     public T? GetTypedDetails<T>()
     {
-        if( Details is JsonElement jsonElement )
+        if ( Details is JsonElement jsonElement )
         {
             // Make sure it's actually an object
-            if( jsonElement.ValueKind == JsonValueKind.Object )
+            if ( jsonElement.ValueKind == JsonValueKind.Object )
             {
                 return JsonSerializer.Deserialize<T>( jsonElement.GetRawText() );
             }
         }
 
-        if( Details is T typed )
+        if ( Details is T typed )
         {
             return typed;
         }
@@ -143,21 +157,27 @@ public class RosterItemDto
 
 public class MovieDetails
 {
-    [JsonPropertyName("tmdbId")]
+    [JsonPropertyName( "tmdbId" )]
     public int TmdbId { get; set; }
-    [JsonPropertyName("imdbId")]
+
+    [JsonPropertyName( "imdbId" )]
     public string ImdbId { get; set; }
-    [JsonPropertyName("releaseDate")]
+
+    [JsonPropertyName( "releaseDate" )]
     public DateTime ReleaseDate { get; set; }
-    [JsonPropertyName("sourceJson")]
+
+    [JsonPropertyName( "sourceJson" )]
     public string? SourceJson { get; set; }
 }
+
 public class DuelDto
 {
     [JsonPropertyName( "duelId" )]
     public Guid DuelId { get; set; }
+
     [JsonPropertyName( "optionA" )]
     public RosterItemDto OptionA { get; set; }
+
     [JsonPropertyName( "optionB" )]
     public RosterItemDto OptionB { get; set; }
 }
@@ -166,8 +186,43 @@ public class DuelResponseDto
 {
     [JsonPropertyName( "duel" )]
     public DuelDto? Duel { get; set; }
+
     [JsonPropertyName( "roster" )]
     public List<RosterItemDto> Roster { get; set; } = new();
+
+    [JsonPropertyName( "completedDuels" )]
+    public List<CompletedDuelDto> CompletedDuels { get; set; } = new();
+}
+
+public class CompletedDuelDto
+{
+    [JsonPropertyName( "duelId" )]
+    public Guid DuelId { get; set; }
+
+    [JsonPropertyName( "item1" )]
+    public MiniItemDto Item1 { get; set; }
+
+    [JsonPropertyName( "item2" )]
+    public MiniItemDto Item2 { get; set; }
+
+    [JsonPropertyName( "winnerId" )]
+    public Guid WinnerId { get; set; }
+    [JsonPropertyName( "updatedDate" )]
+    public DateTime UpdatedDate { get; set; }
+}
+
+
+
+public class MiniItemDto
+{
+    [JsonPropertyName( "id" )]
+    public Guid Id { get; set; }
+
+    [JsonPropertyName( "name" )]
+    public string Name { get; set; }
+
+    [JsonPropertyName( "imageUrl" )]
+    public string ImageUrl { get; set; }
 }
 
 public class SubmitDuelRequest

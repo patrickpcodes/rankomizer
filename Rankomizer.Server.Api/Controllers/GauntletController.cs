@@ -86,18 +86,19 @@ public class GauntletController : ControllerBase
     }
 
 
-    [Authorize]
+    // [Authorize]
+    [AllowAnonymous]
     [HttpPost( "create" )]
     public async Task<ActionResult<Gauntlet>> CreateGauntlet( [FromBody] CreateGauntletRequest request )
     {
         // Simulate user auth for now — replace with actual UserId
-        var userIdClaim = User.FindFirst( ClaimTypes.NameIdentifier )?.Value;
-        if ( userIdClaim == null )
-            return Unauthorized();
+        // var userIdClaim = User.FindFirst( ClaimTypes.NameIdentifier )?.Value;
+        // if ( userIdClaim == null )
+        //     return Unauthorized();
+        //
+        // var userId = Guid.Parse( userIdClaim ); // or int, whatever your ID type is
 
-        var userId = Guid.Parse( userIdClaim ); // or int, whatever your ID type is
-
-
+        var userId =  Guid.Parse( "019609e6-13a1-7d1c-946d-c55523a3a5e7" );
         try
         {
             var gauntlet = await _gauntletService.CreateGauntletFromCollectionAsync(
@@ -117,21 +118,31 @@ public class GauntletController : ControllerBase
     public async Task<ActionResult<DuelResponseDto?>> StartGauntlet(Guid gauntletId)
     {
         var duel = await _gauntletService.GetNextPendingDuelAsync(gauntletId);
+        var roster = await _gauntletService.GetRosterAsync(gauntletId);
+        var rosterDto = roster
+                        .OrderByDescending(ri => ri.Score)
+                        .ThenBy(ri => ri.Item.Name)
+                        .Select(ri => ri.ToDto())
+                        .ToList();
+        var completedDuels = await _context.Duels
+                                           .Where(d => d.GauntletId == gauntletId && d.WinnerRosterItemId != null)
+                                           .OrderByDescending(d => d.UpdatedAt)
+                                           .Include(d => d.RosterItemA).ThenInclude(ra => ra.Item)
+                                           .Include(d => d.RosterItemB).ThenInclude(rb => rb.Item)
+                                           .Select(ri => ri.ToCompletedDuelDto())
+                                           .ToListAsync();
         if (duel == null)
         {
-            var roster = await _gauntletService.GetRosterAsync(gauntletId);
-            var rosterDto = roster
-                            .OrderByDescending(ri => ri.Score)
-                            .ThenBy(ri => ri.Item.Name)
-                            .Select(ri => ri.ToDto())
-                            .ToList();
-            return Ok(new DuelResponseDto { Duel = null, Roster = rosterDto });
+            
+            
+            return Ok(new DuelResponseDto { Duel = null, Roster = rosterDto, CompletedDuels = completedDuels });
         }
 
         return Ok(new DuelResponseDto
         {
             Duel = duel.ToDto(),
-            Roster = duel.Gauntlet.RosterItems.Select(ri => ri.ToDto()).ToList()
+            Roster = rosterDto,
+            CompletedDuels = completedDuels
         });
     }
 
@@ -142,24 +153,39 @@ public class GauntletController : ControllerBase
             request.DuelId,
             request.WinnerRosterItemId
         );
-
         if (nextDuel == null)
         {
             var duel = await _context.Duels
-                                .Include(d => d.Gauntlet)
-                                .ThenInclude(g => g.RosterItems)
-                                .ThenInclude(ri => ri.Item)
-                                .FirstOrDefaultAsync(d => d.Id == request.DuelId);
+                                     .Include(d => d.Gauntlet)
+                                     .ThenInclude(g => g.RosterItems)
+                                     .ThenInclude(ri => ri.Item)
+                                     .FirstOrDefaultAsync(d => d.Id == request.DuelId);
 
-            var roster = duel?.Gauntlet?.RosterItems.Select(ri => ri.ToDto()).ToList() ?? new();
+            var rosterD = duel?.Gauntlet?.RosterItems.Select(ri => ri.ToDto()).ToList() ?? new();
 
-            return Ok(new DuelResponseDto { Duel = null, Roster = roster });
-        }
+            return Ok(new DuelResponseDto { Duel = null, Roster = rosterD });
+        } 
+        var roster = await _gauntletService.GetRosterAsync(nextDuel.GauntletId);
+        var rosterDto = roster
+                        .OrderByDescending(ri => ri.Score)
+                        .ThenBy(ri => ri.Item.Name)
+                        .Select(ri => ri.ToDto())
+                        .ToList();
+        var completedDuels = await _context.Duels
+                                           .Where(d => d.GauntletId == nextDuel.GauntletId && d.WinnerRosterItemId != null) 
+                                           .OrderByDescending(d => d.UpdatedAt)
+                                           .Include(d => d.RosterItemA).ThenInclude(ra => ra.Item)
+                                           .Include(d => d.RosterItemB).ThenInclude(rb => rb.Item)
+                                           .Select(ri => ri.ToCompletedDuelDto())
+                                           .ToListAsync();
+        
+        
 
         return Ok(new DuelResponseDto
         {
             Duel = nextDuel.ToDto(),
-            Roster = nextDuel.Gauntlet.RosterItems.Select(ri => ri.ToDto()).ToList()
+            Roster = nextDuel.Gauntlet.RosterItems.Select(ri => ri.ToDto()).ToList(),
+            CompletedDuels = completedDuels,
         });
     }
 }
@@ -217,6 +243,28 @@ public static class DuelExtensions
                 // },
                 _ => null
             }
+        };
+    }
+    
+    public static CompletedDuelDto ToCompletedDuelDto(this Duel duel)
+    {
+        return new CompletedDuelDto
+        {
+            DuelId = duel.Id,
+            WinnerId = duel.WinnerRosterItemId.Value,
+            Item1 = new MiniItemDto
+            {
+                Id = duel.RosterItemA.Id,
+                Name = duel.RosterItemA.Item.Name,
+                ImageUrl = duel.RosterItemA.Item.ImageUrl,
+            },
+            Item2 = new MiniItemDto
+            {
+                Id = duel.RosterItemB.Id,
+                Name = duel.RosterItemB.Item.Name,
+                ImageUrl = duel.RosterItemB.Item.ImageUrl,
+            },
+            UpdatedDate = duel.UpdatedAt,
         };
     }
 }

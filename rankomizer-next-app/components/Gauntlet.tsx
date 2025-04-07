@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { MiniCards } from "./GauntletRanking";
 import { GauntletDuel } from "./GauntletDuel";
+import { Star } from "lucide-react";
 
 type ItemType = "Movie" | "Song" | "Painting";
 
@@ -11,9 +12,24 @@ export type DuelDto = {
   optionA: RosterItemDto;
   optionB: RosterItemDto;
 };
-type DuelResponseDto = {
+export type MiniItemDto = {
+  id: string;
+  name: string;
+  imageUrl: string;
+};
+
+export type CompletedDuelDto = {
+  duelId: string;
+  item1: MiniItemDto;
+  item2: MiniItemDto;
+  winnerId: string;
+};
+
+// Extend DuelResponseDto to include the completed duels
+export type DuelResponseDto = {
   duel: DuelDto | null;
   roster: RosterItemDto[];
+  completedDuels: CompletedDuelDto[];
 };
 export type RosterItemDto = {
   id: string;
@@ -43,6 +59,7 @@ export default function Gauntlet({ gauntletId }: GauntletDuelProps) {
   const [finished, setFinished] = useState(false);
   const [order, setOrder] = useState(false);
   const [roster, setRoster] = useState<RosterItemDto[]>([]);
+  const [completedDuels, setCompletedDuels] = useState<CompletedDuelDto[]>([]);
 
   useEffect(() => {
     fetchNextDuel();
@@ -60,7 +77,7 @@ export default function Gauntlet({ gauntletId }: GauntletDuelProps) {
     const data: DuelResponseDto = await res.json();
     setDuel(data.duel);
     setRoster(data.roster);
-
+    setCompletedDuels(data.completedDuels);
     if (!data.duel) {
       setFinished(true);
     } else {
@@ -86,6 +103,7 @@ export default function Gauntlet({ gauntletId }: GauntletDuelProps) {
     const data: DuelResponseDto = await res.json();
     setDuel(data.duel);
     setRoster(data.roster);
+    setCompletedDuels(data.completedDuels);
 
     if (!data.duel) {
       setFinished(true);
@@ -118,7 +136,69 @@ export default function Gauntlet({ gauntletId }: GauntletDuelProps) {
           />
         )}
 
-        {submitting && <p>Submitting choice...</p>}
+        {/* {submitting && <p>Submitting choice...</p>} */}
+        {completedDuels && completedDuels.length > 0 && (
+          <div className="max-w-2xl mx-auto border rounded-lg p-4 shadow-sm">
+            <h2 className="text-lg font-semibold mb-3">
+              Battle History : {completedDuels.length} Completed Duels
+            </h2>
+            <div className="space-y-3">
+              {completedDuels.map((battle, index) => (
+                <div key={battle.duelId} className="flex items-center text-xs">
+                  <div
+                    className={`flex items-center w-1/3 ${
+                      battle.winnerId === battle.item1.id
+                        ? "font-medium"
+                        : "opacity-70"
+                    }`}
+                  >
+                    <img
+                      src={battle.item1.imageUrl || "/placeholder.svg"}
+                      alt={battle.item1.name}
+                      className="w-8 h-12 object-cover rounded"
+                    />
+                    <div className="ml-1 overflow-hidden">
+                      <p className="truncate">{battle.item1.name}</p>
+                      {battle.winnerId === battle.item1.id && (
+                        <div className="flex items-center text-green-600">
+                          <Star className="w-3 h-3 mr-1 fill-current" />
+                          <span className="text-[10px]">Winner</span>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="w-1/3 text-[10px] text-gray-500 text-center">
+                    Battle #{completedDuels.length - index}
+                  </div>
+
+                  <div
+                    className={`flex items-center justify-end w-1/3 ${
+                      battle.winnerId === battle.item2.id
+                        ? "font-medium"
+                        : "opacity-70"
+                    }`}
+                  >
+                    <div className="mr-1 text-right overflow-hidden">
+                      <p className="truncate">{battle.item2.name}</p>
+                      {battle.winnerId === battle.item2.id && (
+                        <div className="flex items-center justify-end text-green-600">
+                          <Star className="w-3 h-3 mr-1 fill-current" />
+                          <span className="text-[10px]">Winner</span>
+                        </div>
+                      )}
+                    </div>
+                    <img
+                      src={battle.item2.imageUrl || "/placeholder.svg"}
+                      alt={battle.item2.name}
+                      className="w-8 h-12 object-cover rounded"
+                    />
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
       <div className="overflow-y-auto">
         {roster && roster.length > 0 && <MiniCards items={roster} />}

@@ -3,8 +3,7 @@ using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Rankomizer.Application.Users;
-using Rankomizer.Application.Users.Login;
-using Rankomizer.Application.Users.Logout;
+using Rankomizer.Application.Users.LogoutUser;
 using Rankomizer.Domain.Abstractions;
 using Rankomizer.Domain.User;
 using Rankomizer.Server.Api.Extensions;
@@ -16,7 +15,7 @@ internal sealed class Logout : IEndpoint
 {
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
-        app.MapPost("users/logout", [Authorize] async  (HttpContext context,UserManager<ApplicationUser> userManager, ISender sender, CancellationToken cancellationToken) =>
+        app.MapPost("api/users/logout", [Authorize] async  (HttpContext context,UserManager<ApplicationUser> userManager, ISender sender, CancellationToken cancellationToken) =>
            {
                // Always delete the cookie first
                context.Response.Cookies.Delete("rankomizer-jwt", new CookieOptions

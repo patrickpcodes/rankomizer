@@ -1,6 +1,6 @@
 ﻿using MediatR;
 using Rankomizer.Application.Users;
-using Rankomizer.Application.Users.Login;
+using Rankomizer.Application.Users.LoginUser;
 using Rankomizer.Domain.Abstractions;
 using Rankomizer.Server.Api.Extensions;
 using Rankomizer.Server.Api.Infrastructure;
@@ -9,11 +9,11 @@ namespace Rankomizer.Server.Api.Endpoints.Users;
 
 internal sealed class Login : IEndpoint
 {
-    public sealed record Request(string Email, string Password);
+    public sealed record LoginUserRequest(string Email, string Password);
 
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
-        app.MapPost("users/login", async (HttpContext context, Request request, ISender sender, CancellationToken cancellationToken) =>
+        app.MapPost("api/users/login", async (HttpContext context, LoginUserRequest request, ISender sender, CancellationToken cancellationToken) =>
            {
                var command = new LoginUserCommand(request.Email, request.Password);
 

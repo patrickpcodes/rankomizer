@@ -1,11 +1,8 @@
-﻿using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.Logging;
-using Rankomizer.Application.Abstractions.Authentication;
+﻿using Microsoft.Extensions.Logging;
 using Rankomizer.Application.Abstractions.Messaging;
 using Rankomizer.Domain.Abstractions;
-using Rankomizer.Domain.User;
 
-namespace Rankomizer.Application.Users.Logout;
+namespace Rankomizer.Application.Users.LogoutUser;
 
 internal sealed class LogoutUserCommandHandler(
     ILogger<LogoutUserCommandHandler> logger

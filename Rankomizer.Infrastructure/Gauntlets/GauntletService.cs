@@ -58,7 +58,8 @@ public class GauntletService : IGauntletService
             return null;
 
         duel.WinnerRosterItemId = winnerRosterItemId;
-
+        duel.UpdatedAt = DateTime.UtcNow;
+        
         var loser = duel.RosterItemAId == winnerRosterItemId
             ? duel.RosterItemB
             : duel.RosterItemA;
@@ -139,7 +140,8 @@ public class GauntletService : IGauntletService
                     Gauntlet = gauntlet,
                     RosterItemA = rosterItems[i],
                     RosterItemB = rosterItems[j],
-                    CreatedAt = DateTime.UtcNow
+                    CreatedAt = DateTime.UtcNow,
+                    UpdatedAt = DateTime.UtcNow
                 };
                 duelsList.Add( duel );
             }

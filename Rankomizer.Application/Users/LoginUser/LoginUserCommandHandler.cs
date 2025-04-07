@@ -4,7 +4,7 @@ using Rankomizer.Application.Abstractions.Messaging;
 using Rankomizer.Domain.Abstractions;
 using Rankomizer.Domain.User;
 
-namespace Rankomizer.Application.Users.Login;
+namespace Rankomizer.Application.Users.LoginUser;
 
 internal sealed class LoginUserCommandHandler(
     UserManager<ApplicationUser> userManager,
