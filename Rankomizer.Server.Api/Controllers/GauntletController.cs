@@ -245,6 +245,42 @@ public static class DuelExtensions
             }
         };
     }
+
+    public static CollectionDto ToDto( this Collection collection )
+    {
+        return new CollectionDto()
+        {
+            Id = collection.Id,
+            Name = collection.Name,
+            Description = collection.Description,
+            ImageUrl = collection.ImageUrl,
+            Items = collection.Items.Select( i => new ItemDto
+            {
+                Id = i.ItemId,
+                Name = i.Item.Name,
+                Description = i.Item.Description,
+                ImageUrl = i.Item.ImageUrl,
+                ItemType = i.Item.ItemType,
+                Details = i.Item switch
+                {
+                    Movie m => new MovieDetailsDto
+                    {
+                        TmdbId = m.TmdbId,
+                        ImdbId = m.ImdbId,
+                        ReleaseDate = m.ReleaseDate,
+                        // SourceJson = m.SourceJson
+                    },
+                    // Song s => new SongDetailsDto
+                    // {
+                    //     Artist = s.Artist,
+                    //     Album = s.Album,
+                    //     DurationSeconds = s.DurationSeconds
+                    // },
+                    _ => null
+                }
+            } ).ToList()
+        };
+    }
     
     public static CompletedDuelDto ToCompletedDuelDto(this Duel duel)
     {

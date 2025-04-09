@@ -13,8 +13,8 @@ using Rankomizer.Infrastructure.Database;
 namespace Rankomizer.Infrastructure.Database.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250406065657_AddedImageUrlToCollections")]
-    partial class AddedImageUrlToCollections
+    [Migration("20250409032004_Initial")]
+    partial class Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -248,6 +248,10 @@ namespace Rankomizer.Infrastructure.Database.Migrations
                     b.Property<Guid>("RosterItemBId")
                         .HasColumnType("uuid")
                         .HasColumnName("roster_item_b_id");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at");
 
                     b.Property<Guid?>("WinnerRosterItemId")
                         .HasColumnType("uuid")

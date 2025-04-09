@@ -2,10 +2,11 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using Newtonsoft.Json;
+using Rankomizer.Domain.Abstractions;
 
 namespace Rankomizer.Domain.Catalog;
 
-public abstract class Item
+public abstract class Item : Entity
 {
     [Key]
     [JsonInclude]

@@ -182,6 +182,7 @@ namespace Rankomizer.Infrastructure.Database.Migrations
                     id = table.Column<Guid>(type: "uuid", nullable: false),
                     name = table.Column<string>(type: "text", nullable: false),
                     description = table.Column<string>(type: "text", nullable: false),
+                    image_url = table.Column<string>(type: "text", nullable: false),
                     created_by_user_id = table.Column<Guid>(type: "uuid", nullable: false),
                     created_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
@@ -352,7 +353,8 @@ namespace Rankomizer.Infrastructure.Database.Migrations
                     roster_item_a_id = table.Column<Guid>(type: "uuid", nullable: false),
                     roster_item_b_id = table.Column<Guid>(type: "uuid", nullable: false),
                     winner_roster_item_id = table.Column<Guid>(type: "uuid", nullable: true),
-                    created_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                    created_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    updated_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
                 constraints: table =>
                 {

@@ -2,10 +2,12 @@ using System.Reflection;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Rankomizer.Application;
 using Rankomizer.Application.Catalog;
+using Rankomizer.Application.Collections;
 using Rankomizer.Application.Gauntlet;
 using Rankomizer.Domain.Catalog;
 using Rankomizer.Infrastructure;
 using Rankomizer.Infrastructure.Catalog;
+using Rankomizer.Infrastructure.Collections;
 using Rankomizer.Infrastructure.Gauntlets;
 using Rankomizer.Server.Api;
 using Rankomizer.Server.Api.Extensions;
@@ -26,7 +28,10 @@ builder.Services
 builder.Services.AddEndpoints(Assembly.GetExecutingAssembly());
 
 builder.Services.AddScoped<ICatalogRepository, CatalogRepository>();
+builder.Services.AddScoped<ICollectionRepository, CollectionRepository>();
+
 builder.Services.AddScoped<IGauntletService, GauntletService>();
+
 builder.Services.AddCors( options =>
 {
     options.AddPolicy( "MyCorsPolicy", policy =>
