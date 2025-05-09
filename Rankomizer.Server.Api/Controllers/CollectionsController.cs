@@ -10,10 +10,10 @@ namespace Rankomizer.Server.Api.Controllers;
 [AllowAnonymous]
 [ApiController]
 [Route("api/[controller]")]
-public class CollectionsController: ControllerBase
+public class CollectionsOldController: ControllerBase
 {
     private readonly ApplicationDbContext _context;
-    public CollectionsController( ApplicationDbContext context )
+    public CollectionsOldController( ApplicationDbContext context )
     {
         _context = context;
     }

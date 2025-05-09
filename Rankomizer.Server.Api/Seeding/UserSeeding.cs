@@ -43,6 +43,7 @@ public class UserSeeding
     {
         var usersToCreate = new List<UserRecord>
         {
+            configuration.GetSection("system").Get<UserRecord>(),
             configuration.GetSection( "poweruser" ).Get<UserRecord>(),
             configuration.GetSection( "basicaccessuser" ).Get<UserRecord>(),
         };

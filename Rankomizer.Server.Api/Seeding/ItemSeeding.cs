@@ -1,77 +1,34 @@
-﻿using System.Text.Json;
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Rankomizer.Application.Tmdb;
 using Rankomizer.Domain.Catalog;
 using Rankomizer.Domain.User;
 using Rankomizer.Infrastructure.Database;
-using TMDbLib.Client;
-using TMDbLib.Objects.Collections;
-using TMDbLib.Objects.General;
-using TMDbLib.Objects.Movies;
+using Rankomizer.Infrastructure.Tmdb;
 using TMDbLib.Objects.Search;
-using Collection = Rankomizer.Domain.Catalog.Collection;
 using Movie = Rankomizer.Domain.Catalog.Movie;
-
 namespace Rankomizer.Server.Api.Seeding;
-
-public static class JsonOptions
-{
-    public static readonly JsonSerializerOptions CamelCase = new JsonSerializerOptions
-    {
-        PropertyNamingPolicy = JsonNamingPolicy.CamelCase
-    };
-}
-
-public static class CustomParse<T> where T : class
-{
-    public static T Parse( string jsonString )
-    {
-        var options = new JsonSerializerOptions
-        {
-            PropertyNameCaseInsensitive = true,
-            PropertyNamingPolicy = JsonNamingPolicy.CamelCase
-        };
-        return JsonSerializer.Deserialize<T>( jsonString, options );
-    }
-}
 
 public static class ItemSeeding
 {
-    public static async Task SeedMovieCollectionAsync( ApplicationDbContext context, TMDbClient client,
+    
+    public static async Task SeedMovieCollectionAsync( ApplicationDbContext context, ITmdbManager tmdbManager,
                                                        ApplicationUser user, int collectionId )
     {
-        var tmdbCollection = await client.GetCollectionAsync( collectionId );
-
-        var collection = new Collection()
-        {
-            Name = "TMDB Collection: " + tmdbCollection.Name,
-            Description = tmdbCollection.Overview,
-            ImageUrl = tmdbCollection.PosterPath != null
-                ? $"https://image.tmdb.org/t/p/w500{tmdbCollection.PosterPath}"
-                : null,
-            CreatedByUserId = user.Id,
-            CreatedByUser = user,
-            Items = new List<CollectionItem>()
-        };
+        var tmdbCollection = await tmdbManager.GetTmdbCollectionAsync( collectionId );
+        await FileSeeding.SaveJson<TMDbLib.Objects.Collections.Collection>( FileSeeding.TmdbCollection,
+            $"{collectionId}", tmdbCollection );
+        var collection = TmdbConverter.GetCollectionFromTmdbCollection( tmdbCollection );
+        collection.SetUser(user);
         var movieList = new List<Movie>();
         foreach ( SearchMovie part in tmdbCollection.Parts )
         {
-            var movie = client.GetMovieAsync( part.Id ).Result;
-            movieList.Add( new Movie()
-            {
-                ItemId = Guid.NewGuid(),
-                Name = movie.Title,
-                Description = movie.Overview,
-                ImageUrl = movie.PosterPath != null
-                    ? $"https://image.tmdb.org/t/p/w500{movie.PosterPath}"
-                    : null,
-                ItemType = ItemType.Movie,
-                TmdbId = movie.Id,
-                ImdbId = movie.ImdbId,
-                ReleaseDate = movie.ReleaseDate == null ? new DateTime() : DateTime.SpecifyKind(movie.ReleaseDate.Value, DateTimeKind.Utc),
-                SourceJson = JsonDocument.Parse( JsonSerializer.Serialize( movie, JsonOptions.CamelCase ) )
-            } );
+            var movie = await tmdbManager.GetTmdbMovieAsync( part.Id );
+            await FileSeeding.SaveJson<TMDbLib.Objects.Movies.Movie>( FileSeeding.TmdbMovie,
+                $"{movie.Id}", movie );
+            movieList.Add( TmdbConverter.GetMovieFromTmdbMovie(movie) );
         }
+
         context.Movies.AddRange( movieList );
         var order = 0;
         foreach ( var movie in movieList )
@@ -82,46 +39,22 @@ public static class ItemSeeding
                 Order = order++,
             } );
         }
+
         context.Collections.Add( collection );
         await context.SaveChangesAsync();
-        Console.WriteLine($"Seeded Collection {collection.Name} with {movieList.Count} movies.");
-        // var movie_collection = JsonSerializer.Serialize( collection, JsonOptions.CamelCase );
-        // // // Save the JSON string to a file
-        // var filePath = Path.Combine( Directory.GetCurrentDirectory(), "SeedData", collection.Name+"_collection.json" );
-        // await File.WriteAllTextAsync( filePath, movie_collection );
-        //
-        // var movie_list = JsonSerializer.Serialize( collection, JsonOptions.CamelCase );
-        // // // Save the JSON string to a file
-        // filePath = Path.Combine( Directory.GetCurrentDirectory(), "SeedData", collection.Name+"_movie_list.json" );
-        // await File.WriteAllTextAsync( filePath, movie_list );
+        Console.WriteLine( $"Seeded Collection {collection.Name} with {movieList.Count} movies." );
     }
 
 
     public static async Task SeedItemsAsync( ApplicationDbContext context, UserManager<ApplicationUser> userManager,
-                                             IConfiguration configuration )
+                                             ITmdbManager tmdbManager, IConfiguration configuration )
     {
         if ( !await context.Movies.AnyAsync() )
         {
-            var movieListFileName = "initial_movie_list.json";
-            //Read in JArray from file
-            var filpath = Path.Combine( Directory.GetCurrentDirectory(), "SeedData", movieListFileName );
-            if ( File.Exists( filpath ) )
-            {
-                var t = await File.ReadAllTextAsync( filpath );
-                var movieItemsFromFile = CustomParse<List<Movie>>.Parse( t );
+            
+                var collectionIds = new List<int>() { 645, 10, 230, 119, 1241, 9485, 131292, 87359 };
 
-                if ( movieItemsFromFile != null )
-                {
-                    context.Movies.AddRange( movieItemsFromFile );
-                    await context.SaveChangesAsync();
-                }
-            }
-            else
-            {
-                var tmdbApiKey = configuration["Tmdb:ApiKey"];
-                TMDbClient client = new TMDbClient( tmdbApiKey );
-                var collectionIds = new List<int>() { 645, 10, 230, 119,1241,9485, 131292, 87359 };
-                var userRecord = configuration.GetSection( "poweruser" ).Get<UserRecord>();
+                var userRecord = configuration.GetSection( "system" ).Get<UserRecord>();
                 var user = await userManager.FindByEmailAsync( userRecord.Email );
                 if ( user == null )
                 {
@@ -130,10 +63,8 @@ public static class ItemSeeding
 
                 foreach ( var collectionId in collectionIds )
                 {
-                    await SeedMovieCollectionAsync( context, client, user, collectionId );
+                    await SeedMovieCollectionAsync( context, tmdbManager, user, collectionId );
                 }
-
-            }
         }
 
         return;

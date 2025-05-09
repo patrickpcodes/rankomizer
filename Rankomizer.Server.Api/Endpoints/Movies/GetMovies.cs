@@ -7,7 +7,7 @@ internal sealed class GetMovies : IEndpoint
 {
     public void MapEndpoint( IEndpointRouteBuilder app )
     {
-        app.MapGet( "/api/movies", [AllowAnonymous] async ( ICatalogRepository repo ) =>
+        app.MapGet( "/api/movies", [Authorize] async ( ICatalogRepository repo ) =>
         {
             var movieItems = await repo.GetAllMovies();
             return Results.Ok( movieItems );

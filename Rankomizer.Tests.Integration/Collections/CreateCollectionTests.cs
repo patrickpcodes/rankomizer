@@ -20,7 +20,8 @@ public class CreateCollectionTests( IntegrationTestFactory<Program, ApplicationD
             Description = "",
             ImageUrl = "",
         };
-        var collectionDto = await CollectionManager.CreateCollectionAsync( client, newCollection, rankomizerJwt );
-        Assert.Equal( newCollection.Name, collectionDto.Name );
+        var createdCollectionId = await CollectionTestManager.CreateCollectionAsync( client, newCollection, rankomizerJwt );
+       var createdCollection = await CollectionTestManager.GetCollectionAsync( client, rankomizerJwt, createdCollectionId ); 
+        Assert.Equal( newCollection.Name, createdCollection.Name );
     }
 }

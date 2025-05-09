@@ -1,6 +1,6 @@
 ﻿using Rankomizer.Domain.Catalog;
 
-namespace Rankomizer.Application.Gauntlet;
+namespace Rankomizer.Application.Gauntlets;
 
 public interface IGauntletService
 {

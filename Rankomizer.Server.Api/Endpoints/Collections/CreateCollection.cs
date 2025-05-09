@@ -32,8 +32,7 @@ internal sealed class CreateCollection : IEndpoint
                    var result = await sender.Send( command );
                    if ( result.IsFailure )
                        return Results.BadRequest( result.Error );
-                   var collectionDto = result.Value.ToDto();
-                   return Results.Ok( new { collection = collectionDto } );
+                   return Results.Ok( new { collectionId = result.Value } );
 
                    // var userId = Guid.Parse( userIdClaim ); // or int, whatever your ID type is
                    // var movieItems = await repo.GetAllMovies();

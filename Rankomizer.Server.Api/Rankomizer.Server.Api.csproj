@@ -34,4 +34,8 @@
     <Folder Include="SeedData\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <_ContentIncludedByDefault Remove="SeedData\Collections\645.json" />
+  </ItemGroup>
+
 </Project>

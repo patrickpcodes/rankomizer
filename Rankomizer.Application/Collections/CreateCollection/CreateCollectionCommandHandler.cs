@@ -6,34 +6,14 @@ namespace Rankomizer.Application.Collections.CreateCollection;
 
 internal sealed class CreateCollectionCommandHandler(
     ICollectionRepository repository
-) : ICommandHandler<CreateCollectionCommand, Collection>
+) : ICommandHandler<CreateCollectionCommand, Guid>
 {
-    public async Task<Result<Collection>> Handle( CreateCollectionCommand command, CancellationToken cancellationToken )
+    public async Task<Result<Guid>> Handle( CreateCollectionCommand command, CancellationToken cancellationToken )
     {
         var createdCollection = await repository.CreateCollection( command.Name, command.Description, command.ImageUrl, command.UserId );
+        if(createdCollection.IsFailure)
+            return createdCollection.Error;
         
-        
-        return createdCollection; 
-
-
-        // User? user = await context.Users
-        //                           .AsNoTracking()
-        //                           .SingleOrDefaultAsync(u => u.Email == command.Email, cancellationToken);
-        //
-        // if (user is null)
-        // {
-        //     return Result.Failure<string>(UserErrors.NotFoundByEmail);
-        // }
-        //
-        // bool verified = passwordHasher.Verify(command.Password, user.PasswordHash);
-        //
-        // if (!verified)
-        // {
-        //     return Result.Failure<string>(UserErrors.NotFoundByEmail);
-        // }
-        //
-        // string token = tokenProvider.Create(user);
-        //
-        // return token;
+        return createdCollection.Value; 
     }
 }

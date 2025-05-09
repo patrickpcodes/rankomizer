@@ -5,9 +5,10 @@ import { useRouter } from "next/navigation";
 import { Card, CardContent } from "@/components/ui/card";
 import Image from "next/image";
 import Modal from "@/components/BasicModal"; // Assume you have a Modal component or create one
+import { CollectionsResponse, Collection } from "@/app/types/types";
 
 export default function CollectionsPage() {
-  const [collections, setCollections] = useState([]);
+  const [collections, setCollections] = useState<Collection[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedCollectionId, setSelectedCollectionId] = useState<
     string | null
@@ -16,10 +17,16 @@ export default function CollectionsPage() {
   const router = useRouter();
 
   const fetchMovies = async () => {
-    const res = await fetch("https://localhost:7135/api/collections");
-    const data = await res.json();
+    const res = await fetch(
+      `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/collections`,
+      {
+        credentials: "include",
+      }
+    );
+    const data: CollectionsResponse = await res.json();
+
     console.log("data", data);
-    setCollections(data);
+    setCollections(data.collections);
   };
 
   useEffect(() => {
@@ -37,7 +44,7 @@ export default function CollectionsPage() {
 
     try {
       const response = await fetch(
-        "https://localhost:7135/api/gauntlet/create",
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/gauntlet/create`,
         {
           method: "POST",
           headers: {
@@ -47,6 +54,7 @@ export default function CollectionsPage() {
             collectionId: selectedCollectionId,
             gauntletName,
           }),
+          credentials: "include",
         }
       );
 

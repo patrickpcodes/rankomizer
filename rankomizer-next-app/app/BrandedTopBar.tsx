@@ -153,7 +153,7 @@ export default function BrandedTopBar() {
             <>
               <Button
                 variant="ghost"
-                //   onClick={toggleLogin}
+                onClick={() => router.push("/login")}
                 className="text-primary-foreground dark:text-white hover:bg-primary/90 dark:hover:bg-gray-800"
               >
                 Log in

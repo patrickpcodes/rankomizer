@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Rankomizer.Application.Gauntlet;
+using Rankomizer.Application.Gauntlets;
 using Rankomizer.Domain.Catalog;
 using Rankomizer.Domain.DTOs;
 using Rankomizer.Infrastructure.Database;
@@ -10,6 +10,7 @@ using Rankomizer.Infrastructure.Database;
 namespace Rankomizer.Server.Api.Controllers;
 
 [ApiController]
+[AllowAnonymous]
 [Route( "api/[controller]" )]
 // [Authorize]
 public class GauntletController : ControllerBase
@@ -98,7 +99,7 @@ public class GauntletController : ControllerBase
         //
         // var userId = Guid.Parse( userIdClaim ); // or int, whatever your ID type is
 
-        var userId =  Guid.Parse( "019609e6-13a1-7d1c-946d-c55523a3a5e7" );
+        var userId =  Guid.Parse( "019627e5-5998-77b9-9544-5207f2efaafb" );
         try
         {
             var gauntlet = await _gauntletService.CreateGauntletFromCollectionAsync(
@@ -196,111 +197,4 @@ public class CreateGauntletRequest
     public string? GauntletName { get; set; }
 }
 
-public static class DuelExtensions
-{
-    public static DuelDto ToDto(this Duel duel)
-    {
-        var gauntlet = duel.Gauntlet;
 
-        return new DuelDto
-        {
-            DuelId = duel.Id,
-            OptionA = duel.RosterItemA.ToDto(),
-            OptionB = duel.RosterItemB.ToDto(),
-
-        };
-    }
-
-    public static RosterItemDto ToDto(this RosterItem ri)
-    {
-        var item = ri.Item;
-
-        return new RosterItemDto
-        {
-            Id = ri.Id,
-            Status = ri.Status,
-            Wins = ri.Wins,
-            Losses = ri.Losses,
-            Score = ri.Score,
-            ItemType = item.ItemType,
-            Name = item.Name,
-            Description = item.Description,
-            ImageUrl = item.ImageUrl,
-            Details = item switch
-            {
-                Movie m => new MovieDetailsDto
-                {
-                    TmdbId = m.TmdbId,
-                    ImdbId = m.ImdbId,
-                    ReleaseDate = m.ReleaseDate,
-                    // SourceJson = m.SourceJson,
-                },
-                // Song s => new SongDetailsDto
-                // {
-                //     Artist = s.Artist,
-                //     Album = s.Album,
-                //     DurationSeconds = s.DurationSeconds
-                // },
-                _ => null
-            }
-        };
-    }
-
-    public static CollectionDto ToDto( this Collection collection )
-    {
-        return new CollectionDto()
-        {
-            Id = collection.Id,
-            Name = collection.Name,
-            Description = collection.Description,
-            ImageUrl = collection.ImageUrl,
-            Items = collection.Items.Select( i => new ItemDto
-            {
-                Id = i.ItemId,
-                Name = i.Item.Name,
-                Description = i.Item.Description,
-                ImageUrl = i.Item.ImageUrl,
-                ItemType = i.Item.ItemType,
-                Details = i.Item switch
-                {
-                    Movie m => new MovieDetailsDto
-                    {
-                        TmdbId = m.TmdbId,
-                        ImdbId = m.ImdbId,
-                        ReleaseDate = m.ReleaseDate,
-                        // SourceJson = m.SourceJson
-                    },
-                    // Song s => new SongDetailsDto
-                    // {
-                    //     Artist = s.Artist,
-                    //     Album = s.Album,
-                    //     DurationSeconds = s.DurationSeconds
-                    // },
-                    _ => null
-                }
-            } ).ToList()
-        };
-    }
-    
-    public static CompletedDuelDto ToCompletedDuelDto(this Duel duel)
-    {
-        return new CompletedDuelDto
-        {
-            DuelId = duel.Id,
-            WinnerId = duel.WinnerRosterItemId.Value,
-            Item1 = new MiniItemDto
-            {
-                Id = duel.RosterItemA.Id,
-                Name = duel.RosterItemA.Item.Name,
-                ImageUrl = duel.RosterItemA.Item.ImageUrl,
-            },
-            Item2 = new MiniItemDto
-            {
-                Id = duel.RosterItemB.Id,
-                Name = duel.RosterItemB.Item.Name,
-                ImageUrl = duel.RosterItemB.Item.ImageUrl,
-            },
-            UpdatedDate = duel.UpdatedAt,
-        };
-    }
-}

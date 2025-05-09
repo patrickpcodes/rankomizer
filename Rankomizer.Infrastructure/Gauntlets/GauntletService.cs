@@ -1,5 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Rankomizer.Application.Gauntlet;
+using Rankomizer.Application.Gauntlets;
 using Rankomizer.Domain.Catalog;
 using Rankomizer.Infrastructure.Database;
 

@@ -9,7 +9,7 @@ public partial class HomePage : ContentPage
     private readonly GauntletViewModel _vm;
 
     // Use your actual GauntletId here (or wire up selection later)
-    private readonly Guid _testGauntletId = Guid.Parse( "6f304a17-e9bb-45b8-b0f4-4b2d69ae631d" );
+    private readonly Guid _testGauntletId = Guid.Parse( "e449d035-fe7b-4840-b027-902c6867bb50" );
 
     public HomePage( GauntletViewModel viewModel )
     {

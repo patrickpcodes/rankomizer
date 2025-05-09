@@ -8,5 +8,5 @@ public sealed record CreateCollectionCommand(
     string Description,
     string ImageUrl,
     Guid UserId
-) : ICommand<Collection>;
+) : ICommand<Guid>;
 

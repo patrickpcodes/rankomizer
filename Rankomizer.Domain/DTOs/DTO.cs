@@ -4,6 +4,116 @@ using Rankomizer.Domain.Catalog;
 
 namespace Rankomizer.Domain.DTOs;
 
+public static class DuelExtensions
+{
+    public static DuelDto ToDto( this Duel duel )
+    {
+        var gauntlet = duel.Gauntlet;
+
+        return new DuelDto
+        {
+            DuelId = duel.Id,
+            OptionA = duel.RosterItemA.ToDto(),
+            OptionB = duel.RosterItemB.ToDto(),
+
+        };
+    }
+
+    public static RosterItemDto ToDto( this RosterItem ri )
+    {
+        var item = ri.Item;
+
+        return new RosterItemDto
+        {
+            Id = ri.Id,
+            Status = ri.Status,
+            Wins = ri.Wins,
+            Losses = ri.Losses,
+            Score = ri.Score,
+            ItemType = item.ItemType,
+            Name = item.Name,
+            Description = item.Description,
+            ImageUrl = item.ImageUrl,
+            Details = item switch
+            {
+                Movie m => new MovieDetailsDto
+                {
+                    TmdbId = m.TmdbId,
+                    ImdbId = m.ImdbId,
+                    ReleaseDate = m.ReleaseDate,
+                    // SourceJson = m.SourceJson,
+                },
+                // Song s => new SongDetailsDto
+                // {
+                //     Artist = s.Artist,
+                //     Album = s.Album,
+                //     DurationSeconds = s.DurationSeconds
+                // },
+                _ => null
+            }
+        };
+    }
+
+    public static CollectionDto ToDto( this Collection collection )
+    {
+        return new CollectionDto()
+        {
+            Id = collection.Id,
+            Name = collection.Name,
+            Description = collection.Description,
+            ImageUrl = collection.ImageUrl,
+            Items = collection.Items.Select( i => new ItemDto
+            {
+                Id = i.ItemId,
+                Name = i.Item.Name,
+                Description = i.Item.Description,
+                ImageUrl = i.Item.ImageUrl,
+                ItemType = i.Item.ItemType,
+                Details = i.Item switch
+                {
+                    Movie m => new MovieDetailsDto
+                    {
+                        TmdbId = m.TmdbId,
+                        ImdbId = m.ImdbId,
+                        ReleaseDate = m.ReleaseDate,
+                        // SourceJson = m.SourceJson
+                    },
+                    // Song s => new SongDetailsDto
+                    // {
+                    //     Artist = s.Artist,
+                    //     Album = s.Album,
+                    //     DurationSeconds = s.DurationSeconds
+                    // },
+                    _ => null
+                }
+            } ).ToList()
+        };
+    }
+
+    public static CompletedDuelDto ToCompletedDuelDto( this Duel duel )
+    {
+        return new CompletedDuelDto
+        {
+            DuelId = duel.Id,
+            WinnerId = duel.WinnerRosterItemId.Value,
+            Item1 = new MiniItemDto
+            {
+                Id = duel.RosterItemA.Id,
+                Name = duel.RosterItemA.Item.Name,
+                ImageUrl = duel.RosterItemA.Item.ImageUrl,
+            },
+            Item2 = new MiniItemDto
+            {
+                Id = duel.RosterItemB.Id,
+                Name = duel.RosterItemB.Item.Name,
+                ImageUrl = duel.RosterItemB.Item.ImageUrl,
+            },
+            UpdatedDate = duel.UpdatedAt,
+        };
+    }
+
+}
+
 public class CollectionDto
 {
     [JsonPropertyName( "id" )]
@@ -20,6 +130,8 @@ public class CollectionDto
 
     public List<ItemDto> Items { get; set; } = new();
 }
+
+
 
 public class ItemDto
 {

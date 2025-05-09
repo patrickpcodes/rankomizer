@@ -16,4 +16,10 @@ public class Collection
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
     public ICollection<CollectionItem> Items { get; set; } = new List<CollectionItem>();
+    
+    public void SetUser( ApplicationUser user )
+    {
+        CreatedByUser = user;
+        CreatedByUserId = user.Id;
+    }
 }

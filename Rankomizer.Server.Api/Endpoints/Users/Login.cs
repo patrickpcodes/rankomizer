@@ -28,7 +28,7 @@ internal sealed class Login : IEndpoint
                            HttpOnly = true,
                            Secure = true, // set to true only if you're running on HTTPS
                            SameSite = SameSiteMode.None, // or Lax, depending on your frontend/backend setup
-                           Expires = DateTimeOffset.Now.AddMinutes(300)
+                           Expires = DateTimeOffset.Now.AddMinutes(3000)
                        });
 
                        return Results.Ok(new { message = "Logged in" }); // you can return anything here

@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Rankomizer.Application.Tmdb;
 using Rankomizer.Domain.User;
 using Rankomizer.Infrastructure.Database;
 
@@ -16,7 +17,8 @@ public static class SeedApplication
 
         var userSeeding = new UserSeeding( userManager, app.Configuration );
         userSeeding.SeedDatabase().GetAwaiter().GetResult();
-        ItemSeeding.SeedItemsAsync( appContextDb, userManager, config ).GetAwaiter().GetResult();
+        var tmdbManager = scope.ServiceProvider.GetRequiredService<ITmdbManager>();
+        ItemSeeding.SeedItemsAsync( appContextDb, userManager, tmdbManager, config ).GetAwaiter().GetResult();
         //Seed all other data
         //var dataSeeding = new DataSeeding();
         //dataSeeding.SeedDatabase().GetAwaiter().GetResult();

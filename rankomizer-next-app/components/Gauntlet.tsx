@@ -68,9 +68,10 @@ export default function Gauntlet({ gauntletId }: GauntletDuelProps) {
   async function fetchNextDuel() {
     setLoading(true);
     const res = await fetch(
-      `https://localhost:7135/api/gauntlet/${gauntletId}/start`,
+      `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/gauntlet/${gauntletId}/start`,
       {
         method: "POST",
+        credentials: "include",
       }
     );
 
@@ -91,14 +92,18 @@ export default function Gauntlet({ gauntletId }: GauntletDuelProps) {
     if (!duel) return;
 
     setSubmitting(true);
-    const res = await fetch("https://localhost:7135/api/gauntlet/duel/submit", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        duelId: duel.duelId,
-        winnerRosterItemId: winnerId,
-      } as SubmitDuelRequest),
-    });
+    const res = await fetch(
+      `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/gauntlet/duel/submit`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          duelId: duel.duelId,
+          winnerRosterItemId: winnerId,
+        } as SubmitDuelRequest),
+        credentials: "include",
+      }
+    );
 
     const data: DuelResponseDto = await res.json();
     setDuel(data.duel);

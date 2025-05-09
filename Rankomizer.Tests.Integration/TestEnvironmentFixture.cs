@@ -3,9 +3,12 @@ using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
+using Rankomizer.Application.Tmdb;
 using Testcontainers.PostgreSql;
 using Testcontainers.Redis;
 using Rankomizer.Server.Api.Extensions;
+using Rankomizer.Tests.Integration.Seeding;
 
 namespace Rankomizer.Tests.Integration;
 
@@ -50,6 +53,11 @@ public class IntegrationTestFactory<TProgram, TDbContext> : WebApplicationFactor
             } );
             // TODO add back in at a later point
             // services.EnsureDbCreated<TDbContext>();
+            
+            services.RemoveAll<ITmdbManager>();
+
+            // Add the new scoped service
+            services.AddScoped<ITmdbManager, SeedingTmdbManager>();
         } );
     }
 
